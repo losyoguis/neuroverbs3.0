@@ -28,7 +28,7 @@
       if(res.status === 404){
         const p = String(path || "");
         if(p === (cfg().endpoints.chat || "/chat")){
-          msg = "Tu Worker no tiene el endpoint /chat (Ruta no encontrada). Abre Cloudflare → Workers & Pages → neuroverbs-api → Edit code, pega el archivo cloudflare-worker/worker.js del ZIP y luego Deploy.";
+          msg = "Tu Worker no tiene el endpoint /chat (Ruta no encontrada). Abre Cloudflare → Workers & Pages → neuroverbs-api → Edit code, reemplaza el código de tu Worker por la versión recomendada y luego Deploy.";
         } else if(p === (cfg().endpoints.generate || "/generate")){
           msg = "Tu Worker no tiene el endpoint /generate (Ruta no encontrada). Revisa que el Worker desplegado sea el correcto.";
         } else if(p === (cfg().endpoints.vocab || "/vocab")){

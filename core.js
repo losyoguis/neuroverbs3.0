@@ -2,18 +2,22 @@
 // =========================
 // Google Auth (GSI) + Sheets (Apps Script WebApp)
 // =========================
-const DEFAULT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwh3qTioH-xVnVL43V5_Y7_lc-Ng6BYCvNsj3E6IPDpanwUGa6cgqYpbR6yt724E5UF/exec";
+const NV_CFG = (window.NEUROVERBS_CONFIG || {});
+const DEFAULT_WEB_APP_URL = (NV_CFG.webAppUrl || "https://script.google.com/macros/s/AKfycbwh3qTioH-xVnVL43V5_Y7_lc-Ng6BYCvNsj3E6IPDpanwUGa6cgqYpbR6yt724E5UF/exec");
 // Tip: si vuelves a implementar el Web App, puedes pasar la nueva URL así:
 //   tuapp.html?webapp=PASTE_AQUI_LA_URL
 // y queda guardada en localStorage automáticamente.
-const WEB_APP_URL = (new URLSearchParams(location.search).get("webapp")
+const WEB_APP_URL = (
+  new URLSearchParams(location.search).get("webapp")
+  || NV_CFG.webAppUrl
   || localStorage.getItem("WEB_APP_URL_V5")
-  || DEFAULT_WEB_APP_URL);
+  || DEFAULT_WEB_APP_URL
+);
 console.log("[Neuroverbs] WEB_APP_URL =", WEB_APP_URL);
 try{ localStorage.setItem("WEB_APP_URL_V5", WEB_APP_URL); }catch(_){ }
-const ALLOWED_DOMAIN = "iemanueljbetancur.edu.co";
-const ALLOWED_EMAIL_SUFFIX = "@"+ALLOWED_DOMAIN;
-const OAUTH_CLIENT_ID = "637468265896-5olh8rhf76setm52743tashi3vq1la67.apps.googleusercontent.com";
+const ALLOWED_DOMAIN = (NV_CFG.allowedDomain !== undefined ? NV_CFG.allowedDomain : (localStorage.getItem("ALLOWED_DOMAIN_NV") || "iemanueljbetancur.edu.co"));
+const ALLOWED_EMAIL_SUFFIX = (ALLOWED_DOMAIN ? "@"+ALLOWED_DOMAIN : "");
+const OAUTH_CLIENT_ID = (NV_CFG.oauthClientId || localStorage.getItem("OAUTH_CLIENT_ID_NV") || "637468265896-5olh8rhf76setm52743tashi3vq1la67.apps.googleusercontent.com");
 
 // Leaderboard paging
 const LB_PAGE_SIZE = 5;
@@ -351,7 +355,7 @@ function onGoogleCredential(response) {
   
   // 🔒 Solo cuentas del dominio institucional
   const email = String((user && user.email) || "").toLowerCase();
-  if(!email.endsWith(ALLOWED_EMAIL_SUFFIX.toLowerCase())) {
+  if(ALLOWED_DOMAIN && !email.endsWith(ALLOWED_EMAIL_SUFFIX.toLowerCase())) {
     try{ toastAchievement("⚠️","Cuenta no permitida","Solo se permite iniciar sesión con cuentas @"+ALLOWED_DOMAIN); }catch(e){ alert("Solo se permite iniciar sesión con cuentas @"+ALLOWED_DOMAIN); }
     try{ if(window.google && google.accounts && google.accounts.id) {
       google.accounts.id.disableAutoSelect && google.accounts.id.disableAutoSelect();

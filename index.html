@@ -26,6 +26,7 @@
 
 <!-- ✅✅✅ CONSOLE GOOGLE -->
 <script async="" defer="" src="https://accounts.google.com/gsi/client"></script>
+<script src="nv-config.js"></script>
 
 <!-- AUTH MOVED BELOW -->
 
@@ -77,8 +78,9 @@
 <script>
 /* ✅ Dominio institucional + auto-login + redirección */
 (function () {
-  const ALLOWED_DOMAIN = 'iemanueljbetancur.edu.co';
-  const TARGET = 'neuroverbs.html';
+  const cfgDom = (window.NEUROVERBS_CONFIG ? window.NEUROVERBS_CONFIG.allowedDomain : undefined);
+  const ALLOWED_DOMAIN = (cfgDom !== undefined ? cfgDom : (localStorage.getItem('ALLOWED_DOMAIN_NV') || 'iemanueljbetancur.edu.co'));
+const TARGET = 'neuroverbs.html';
 
   function decodeJwtPayload(jwt) {
     try {
@@ -99,7 +101,7 @@
       if (!raw) return false;
       const u = JSON.parse(raw);
       const email = (u.email || "").toLowerCase();
-      if (email && email.endsWith("@" + ALLOWED_DOMAIN)) {
+      if (email && (!ALLOWED_DOMAIN || email.endsWith("@" + ALLOWED_DOMAIN))) {
         window.location.replace(TARGET);
         return true;
       }
@@ -137,7 +139,7 @@
           if (token) {
             payload = decodeJwtPayload(token);
             const email = (payload && payload.email ? String(payload.email) : "").toLowerCase();
-            ok = email.endsWith("@" + ALLOWED_DOMAIN);
+            ok = (!ALLOWED_DOMAIN || email.endsWith("@" + ALLOWED_DOMAIN));
 
             // guarda “sesión” local para redirección automática futura
             if (ok) {
@@ -181,6 +183,17 @@
   const t = setInterval(() => { if (patch()) clearInterval(t); }, 50);
 })();
 </script>
+
+<script>
+(function(){
+  try{
+    const d = ((window.NEUROVERBS_CONFIG && window.NEUROVERBS_CONFIG.allowedDomain) || localStorage.getItem("ALLOWED_DOMAIN_NV") || "iemanueljbetancur.edu.co");
+    const el = document.querySelector(".authDomainLabel");
+    if (el) el.textContent = "Acceder con @" + d;
+  }catch(_){}
+})();
+</script>
+
 <script src="core.js"></script>
 
 

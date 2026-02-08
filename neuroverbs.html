@@ -52,6 +52,7 @@
 
 <!-- ✅✅✅ CONSOLE GOOGLE -->
 <script async="" defer="" src="https://accounts.google.com/gsi/client"></script>
+<script src="nv-config.js"></script>
 
 <!-- AUTH MOVED BELOW -->
 
@@ -405,6 +406,18 @@
 </script>
 
 <!-- XP sync watcher removed: XP is synced only from exercise actions + server fetch to avoid double-counting -->
+
+<script>
+(function(){
+  try{
+    const cfgDom = (window.NEUROVERBS_CONFIG ? window.NEUROVERBS_CONFIG.allowedDomain : undefined);
+    const d = (cfgDom !== undefined ? cfgDom : (localStorage.getItem("ALLOWED_DOMAIN_NV") || "iemanueljbetancur.edu.co"));
+const el = document.querySelector(".authDomainLabel");
+    if (el) el.textContent = d ? ("Acceder con @" + d) : "Acceder con cualquier cuenta";
+  }catch(_){}
+})();
+</script>
+
 <script src="core.js"></script>
   <!-- DB helpers (hidden) -->
   <a href="verbs.html" style="display:none">verbs</a>
