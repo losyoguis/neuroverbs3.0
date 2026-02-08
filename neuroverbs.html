@@ -237,7 +237,16 @@
 </div>
 <p class="lbNote" id="lbStatus">Inicia sesión para ver el ranking.</p>
 <div class="lbList" id="leaderboardList"></div>
-<div class="lbFollowWrap" style="display:flex; justify-content:center; margin:14px 0 2px 0;">
+<div class="lbFollowWrap" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; margin:14px 0 2px 0;">
+  <button class="lbBtn" id="btnRankingGlobal" type="button"
+          data-help="🌍 Ver el Ranking Global (hoja publicada) en un modal dentro de la app."
+          onclick="abrirRankingGlobal()"
+          style="text-decoration:none; padding:12px 18px; border-radius:999px; font-weight:900; letter-spacing:.2px;
+                 background: linear-gradient(135deg, rgba(255, 178, 74, .95), rgba(255, 74, 160, .95));
+                 color:#08101c; border:1px solid rgba(255,255,255,.22);
+                 box-shadow: 0 10px 24px rgba(0,0,0,.30);">
+    🌍 Ranking Global
+  </button>
   <a class="lbBtn" id="btnSeguimiento" href="seguimiento-estudiantes.html"
      style="text-decoration:none; padding:12px 18px; border-radius:999px; font-weight:900; letter-spacing:.2px;
             background: linear-gradient(135deg, rgba(0, 255, 178, .95), rgba(0, 140, 255, .95));
@@ -353,6 +362,27 @@
 </div>
 </div>
 
+
+<!-- ✅ MODAL: RANKING GLOBAL (Google Sheets publicado) -->
+<div class="overlay" id="globalRankingOverlay" style="display:none;">
+  <div class="modal modal-top">
+    <h2 style="margin-bottom:10px;">🌍 Ranking Global</h2>
+
+    <div style="width:100%; height:72vh; max-height:72vh; border-radius:12px; overflow:hidden; border:1px solid rgba(15,23,42,.12);
+                box-shadow:0 10px 26px rgba(15,23,42,.20); background:#fff;">
+      <iframe
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4AY3kQOIsRM-6TJIWJVr2MDtRTcE3gJvwu1KBKQy3SVSViXTYBRZ-tXCjODwwsaLgRfGixyYoe2Zh/pubhtml?gid=1102861025&amp;single=true&amp;widget=true&amp;headers=false"
+        style="width:100%; height:100%; border:0; margin:0; padding:0;"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Ranking Global">
+      </iframe>
+    </div>
+
+    <button class="btn-main" data-help="Cerrar Ranking Global y volver a la app." onclick="cerrarRankingGlobal()" style="margin-top:14px; width:100%;">CERRAR ✖️</button>
+  </div>
+</div>
+
 <footer class="appFooter" role="contentinfo">
   <div class="footerInner">
     <div class="footerTopRow" aria-label="Smart E-book">
@@ -416,6 +446,34 @@ const el = document.querySelector(".authDomainLabel");
     if (el) el.textContent = d ? ("Acceder con @" + d) : "Acceder con cualquier cuenta";
   }catch(_){}
 })();
+</script>
+
+
+<script>
+  // ✅ Modal: Ranking Global
+  function abrirRankingGlobal(){
+    const ov = document.getElementById("globalRankingOverlay");
+    if(!ov) return;
+    ov.style.display = "flex";
+    document.body.classList.add("modal-open");
+  }
+  function cerrarRankingGlobal(){
+    const ov = document.getElementById("globalRankingOverlay");
+    if(!ov) return;
+    ov.style.display = "none";
+    document.body.classList.remove("modal-open");
+  }
+  // Cerrar al hacer click en el fondo y con ESC
+  (function(){
+    const ov = document.getElementById("globalRankingOverlay");
+    if(!ov) return;
+    ov.addEventListener("click", function(e){
+      if(e.target === ov) cerrarRankingGlobal();
+    });
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape" && ov.style.display === "flex") cerrarRankingGlobal();
+    });
+  })();
 </script>
 
 <script src="core.js"></script>
