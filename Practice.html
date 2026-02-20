@@ -826,6 +826,14 @@ html.light .ftn .fdot { border-color: rgba(240,246,255,.92); }
   cursor: pointer;
 }
 .tm-btn-close2:hover { border-color: var(--b3); color: var(--tx); background: var(--s2); }
+
+/* Extra: Present Simple full guide (embedded) */
+.tm-extra{ margin-top:16px; padding-top:16px; border-top:1px dashed var(--b1); display:none; }
+.tm-extra-title{ font-family:'JetBrains Mono', monospace; font-size:.62rem; letter-spacing:2px; text-transform:uppercase; color:var(--tx3); font-weight:900; margin-bottom:8px; }
+.tm-extra-sub{ font-size:.82rem; color:var(--tx2); margin-bottom:12px; line-height:1.45; }
+.tm-extra-iframe{ width:100%; height:min(78vh, 820px); border:1px solid var(--b1); background:#0b0f1a; border-radius:16px; overflow:hidden; }
+@media (max-width:520px){ .tm-extra-iframe{ height:78vh; } }
+
 </style>
 </head>
 <body>
@@ -869,6 +877,13 @@ html.light .ftn .fdot { border-color: rgba(240,246,255,.92); }
   <div class="hdr-tag">Neuroverbs · 12 tiempos verbales · Motor de conjugación v8.0</div>
   <h1>Neuroverbs</h1>
   <p>Explora los tiempos verbales en una línea de tiempo, mira cuándo se usan, su estructura, conjuga verbos y genera oraciones con adverbios.</p>
+
+  <div class="hdr-hash" role="button" tabindex="0" aria-label="Copiar enlace a este tiempo"
+       onclick="copyShareLink()"
+       onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copyShareLink();}">
+    <span>🔗</span> <span id="shareLinkTxt">Copiar enlace a este tiempo</span>
+  </div>
+
 </div>
 
 <!-- 2. TIMELINE STICKY -->
@@ -926,8 +941,7 @@ html.light .ftn .fdot { border-color: rgba(240,246,255,.92); }
     <div class="ve-left">
       <div class="ve-lbl-row">
         <div class="ve-main-lbl">Motor de conjugación · V1 / V2 / V3</div>
-        <div id="veCount" class="ve-count-badge"></div>
-      </div>
+</div>
       <div class="srch-wrap">
         <span class="srch-ico" aria-hidden="true">⌕</span>
         <input id="vIn" class="srch-in" type="text"
@@ -1037,7 +1051,15 @@ html.light .ftn .fdot { border-color: rgba(240,246,255,.92); }
       </button>
       <button class="tm-btn-close2" onclick="closeTenseModal()">Cerrar</button>
     </div>
-  </div>
+
+    
+    <!-- Extra: Guía extendida (se carga en iframe dentro del modal) -->
+    <div id="tmExtra" class="tm-extra" aria-label="Guía extendida del tiempo verbal">
+      <div id="tmExtraTitle" class="tm-extra-title">📘 Guía extendida</div>
+      <div id="tmExtraSub" class="tm-extra-sub">Resumen ampliado con ejemplos y tips.</div>
+      <iframe id="tmExtraIfr" class="tm-extra-iframe" title="Guía extendida" loading="lazy"></iframe>
+    </div>
+</div>
 </div>
 
 <!-- ══ FOOTER CON TIMELINE EDUCATIVA ══ -->
@@ -1136,6 +1158,2686 @@ html.light .ftn .fdot { border-color: rgba(240,246,255,.92); }
   </div>
 </footer>
 
+
+<!-- Template embebido para Present Simple (se carga en iframe dentro del modal) -->
+<template id="prsAppendDoc">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Present Simple: La Guía Definitiva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #a855f7; --bg: #0f172a;
+            --card-bg: #1e293b; --text: #f8fafc; --accent: #22d3ee;
+            --success: #22c55e; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.8; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: 3px solid var(--primary); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: thin; }
+        .tab-btn { background: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
+        .tab-btn.active { background: var(--primary); border-color: var(--accent); box-shadow: 0 0 15px rgba(99, 102, 241, 0.6); }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h3 { color: var(--secondary); margin: 25px 0 10px 0; font-size: 1.3rem; }
+        p { margin-bottom: 15px; color: #cbd5e1; }
+
+        .example-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .example-item { background: #0b0f1a; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--accent); font-family: 'Courier New', monospace; font-size: 1rem; color: #a5f3fc; }
+        .trans { display: block; font-family: 'Poppins', sans-serif; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; font-style: italic; }
+
+        .note { background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); padding: 15px; margin: 20px 0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        th { background: var(--primary); }
+
+        .quiz-option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .quiz-option:hover { background: rgba(99, 102, 241, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mastering Present Simple</h1>
+        <p>Tutorial Integral para Hispanohablantes</p>
+    </header>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/PHi80Uu1zYw" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'estructura')">1. Estructura</button>
+        <button class="tab-btn" onclick="openTab(event, 'respuestas')">2. Respuestas</button>
+        <button class="tab-btn" onclick="openTab(event, 'uso')">3. Uso</button>
+        <button class="tab-btn" onclick="openTab(event, 'adverbios')">4. Adverbios</button>
+        <button class="tab-btn" onclick="openTab(event, 'ortografia')">5. Ortografía</button>
+        <button class="tab-btn" onclick="openTab(event, 'preguntas')">6. WH- Questions</button>
+        <button class="tab-btn" onclick="openTab(event, 'ejemplos')">7. Resumen</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">🔥 Examen</button>
+    </nav>
+
+    <section id="estructura" class="content-section active">
+        <div class="card">
+            <h2>Estructura Gramatical</h2>
+            <p>El Presente Simple se compone de tres formas básicas:</p>
+            <ul>
+                <li><b>Afirmativa:</b> Sujeto + Verbo. Si el sujeto es 3ª persona (He, She, It), añadimos <b>-s</b> o <b>-es</b>.</li>
+                <li><b>Negativa:</b> Sujeto + Auxiliar (<b>don't / doesn't</b>) + Verbo en forma base (sin -s).</li>
+                <li><b>Interrogativa:</b> Auxiliar (<b>Do / Does</b>) + Sujeto + Verbo en forma base.</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Estructura:</h3>
+                <div class="example-item">I <b>speak</b> English every day.<span class="trans">Yo hablo inglés todos los días.</span></div>
+                <div class="example-item">He <b>speaks</b> English very well.<span class="trans">Él habla inglés muy bien (Afirmativa 3ª persona).</span></div>
+                <div class="example-item">We <b>don't</b> live in Madrid.<span class="trans">Nosotros no vivimos en Madrid (Negativa).</span></div>
+                <div class="example-item">She <b>doesn't</b> want a coffee.<span class="trans">Ella no quiere un café (Negativa 3ª persona).</span></div>
+                <div class="example-item"><b>Do</b> you go to the gym?<span class="trans">¿Vas tú al gimnasio? (Interrogativa).</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="respuestas" class="content-section">
+        <div class="card">
+            <h2>Short Answers (Respuestas Cortas)</h2>
+            <p>En inglés, para responder a preguntas de "Sí o No", repetimos el auxiliar utilizado en la pregunta. No es natural decir solo "Yes" o "No".</p>
+            <div class="example-list">
+                <h3>Ejemplos de Respuestas:</h3>
+                <div class="example-item">Do you study? - <b>Yes, I do.</b><span class="trans">¿Estudias? - Sí.</span></div>
+                <div class="example-item">Does he play? - <b>No, he doesn't.</b><span class="trans">¿Él juega? - No.</span></div>
+                <div class="example-item">Do they help you? - <b>No, they don't.</b><span class="trans">¿Ellos te ayudan? - No.</span></div>
+                <div class="example-item">Does it work? - <b>Yes, it does.</b><span class="trans">¿Funciona? - Sí.</span></div>
+                <div class="example-item">Do we have a test? - <b>Yes, we do.</b><span class="trans">¿Tenemos un examen? - Sí.</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="uso" class="content-section">
+        <div class="card">
+            <h2>¿Cuándo se usa?</h2>
+            <p>El uso principal son las <b>acciones habituales</b>. No se usa para acciones que ocurren en este preciso instante (eso es Presente Continuo), sino para rutinas y hechos permanentes.</p>
+            <div class="example-list">
+                <h3>Ejemplos de Uso:</h3>
+                <div class="example-item">I <b>get up</b> at 8 o'clock.<span class="trans">Me levanto a las 8 (Rutina).</span></div>
+                <div class="example-item">Water <b>boils</b> at 100 degrees.<span class="trans">El agua hierve a 100 grados (Verdad universal).</span></div>
+                <div class="example-item">She <b>works</b> in a hospital.<span class="trans">Ella trabaja en un hospital (Estado permanente).</span></div>
+                <div class="example-item">They <b>travel</b> every summer.<span class="trans">Ellos viajan cada verano (Hábito).</span></div>
+                <div class="example-item">The train <b>leaves</b> at nine.<span class="trans">El tren sale a las nueve (Horario fijo).</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="adverbios" class="content-section">
+        <div class="card">
+            <h2>Adverbios y Frecuencia (Completo)</h2>
+            <h3>1. Adverbios de Frecuencia</h3>
+            <p>Indican qué tan seguido hacemos algo. <b>Regla de oro:</b> Se colocan delante del verbo principal (pero después del verbo To Be).</p>
+            <table>
+                <tr><th>Adverbio</th><th>Significado</th></tr>
+                <tr><td>Always</td><td>Siempre</td></tr>
+                <tr><td>Usually / Normally</td><td>Normalmente</td></tr>
+                <tr><td>Often</td><td>A menudo</td></tr>
+                <tr><td>Sometimes</td><td>A veces</td></tr>
+                <tr><td>Hardly ever / Rarely</td><td>Casi nunca</td></tr>
+                <tr><td>Never</td><td>Nunca</td></tr>
+            </table>
+
+            <h3>2. Expresiones Temporales</h3>
+            <p>Se suelen colocar al final de la frase.</p>
+            <ul>
+                <li><b>Every...:</b> Every day, Every week (Sin 's' al final).</li>
+                <li><b>Once a... / Twice a...:</b> Una vez a / Dos veces a.</li>
+                <li><b>Three times a...:</b> Tres veces a.</li>
+            </ul>
+
+            <div class="example-list">
+                <h3>Ejemplos de Frecuencia:</h3>
+                <div class="example-item">1. We <b>often</b> go to the beach.<span class="trans">A menudo vamos a la playa.</span></div>
+                <div class="example-item">2. I <b>never</b> eat meat.<span class="trans">Nunca como carne.</span></div>
+                <div class="example-item">3. He <b>usually</b> studies at night.<span class="trans">Él normalmente estudia de noche.</span></div>
+                <div class="example-item">4. She visits her aunt <b>twice a week</b>.<span class="trans">Ella visita a su tía dos veces por semana.</span></div>
+                <div class="example-item">5. We play tennis <b>every Saturday</b>.<span class="trans">Jugamos al tenis todos los sábados.</span></div>
+            </div>
+            <div class="note"><b>Nota:</b> "Sometimes" es flexible y puede ir también al principio: <i>Sometimes we go out.</i></div>
+        </div>
+    </section>
+
+    <section id="ortografia" class="content-section">
+        <div class="card">
+            <h2>Reglas de la 3ª Persona (Ortografía)</h2>
+            <p>Cuando usamos He, She o It en afirmativa, el verbo cambia según su terminación:</p>
+            <ul>
+                <li>Si termina en <b>-s, -sh, -ch, -x, -o</b>: Añadimos <b>-es</b>.</li>
+                <li>Si termina en <b>Consonante + Y</b>: Cambiamos 'y' por <b>-ies</b>.</li>
+                <li>Demás casos: Solo añadimos <b>-s</b>.</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Ortografía:</h3>
+                <div class="example-item">1. She <b>watches</b> TV.<span class="trans">Ella ve la tele (Termina en -ch).</span></div>
+                <div class="example-item">2. He <b>goes</b> to school.<span class="trans">Él va al colegio (Termina en -o).</span></div>
+                <div class="example-item">3. The baby <b>cries</b> a lot.<span class="trans">El bebé llora mucho (Cry -> Cries).</span></div>
+                <div class="example-item">4. He <b>fixes</b> cars.<span class="trans">Él arregla coches (Termina en -x).</span></div>
+                <div class="example-item">5. She <b>kisses</b> her mom.<span class="trans">Ella besa a su madre (Termina en -ss).</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="preguntas" class="content-section">
+        <div class="card">
+            <h2>Preguntas con "WH-"</h2>
+            <p>Se usan para pedir información específica. La estructura es: <b>Palabra WH + Do/Does + Sujeto + Verbo.</b></p>
+            <div class="example-list">
+                <h3>Ejemplos WH-:</h3>
+                <div class="example-item">1. <b>Where</b> do you live?<span class="trans">¿Dónde vives?</span></div>
+                <div class="example-item">2. <b>What</b> does she eat?<span class="trans">¿Qué come ella?</span></div>
+                <div class="example-item">3. <b>When</b> do they arrive?<span class="trans">¿Cuándo llegan ellos?</span></div>
+                <div class="example-item">4. <b>How</b> do you spell your name?<span class="trans">¿Cómo deletreas tu nombre?</span></div>
+                <div class="example-item">5. <b>Why</b> do we study English?<span class="trans">¿Por qué estudiamos inglés?</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejemplos" class="content-section">
+        <div class="card">
+            <h2>Resumen de Práctica Combinada</h2>
+            <p>Aquí integramos adverbios, tercera persona y complementos tal como el profesor explica al final del video.</p>
+            <div class="example-list">
+                <h3>Ejemplos Combinados:</h3>
+                <div class="example-item">1. I visit my aunt <b>every Sunday</b>.<span class="trans">Visito a mi tía cada domingo.</span></div>
+                <div class="example-item">2. She <b>visits</b> her grandfather everyday.<span class="trans">Ella visita a su abuelo todos los días.</span></div>
+                <div class="example-item">3. I <b>often</b> study in the morning.<span class="trans">A menudo estudio por la mañana.</span></div>
+                <div class="example-item">4. She <b>studies</b> French <b>once a week</b>.<span class="trans">Ella estudia francés una vez a la semana.</span></div>
+                <div class="example-item">5. They <b>always</b> play tennis at weekends.<span class="trans">Ellos siempre juegan al tenis los fines de semana.</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="card">
+            <h2 id="qText">Examen de Conocimientos</h2>
+            <div id="options"></div>
+            <p id="res" style="margin-top:15px; font-weight:bold;"></p>
+            <button id="nBtn" class="tab-btn" style="display:none; margin-top:15px;" onclick="loadQ()">Siguiente</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openTab(evt, name) {
+        let i, content, btn;
+        content = document.getElementsByClassName("content-section");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        btn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
+        document.getElementById(name).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo({top: 450, behavior: 'smooth'});
+    }
+
+    const quiz = [
+        { q: "¿Cuál es la forma correcta para 'She'?", o: ["She watch", "She watches", "She watchs"], c: 1 },
+        { q: "¿Dónde va 'Never'?", o: ["Al final", "Antes del verbo principal", "Al principio siempre"], c: 1 },
+        { q: "¿Cómo se dice 'cada semana'?", o: ["Every week", "Every weeks", "All weeks"], c: 0 },
+        { q: "¿Respuesta corta para 'Does he help?'?", o: ["Yes, he helps", "Yes, he does", "Yes, he help"], c: 1 },
+        { q: "¿Cómo se dice 'una vez al mes'?", o: ["One month", "Once a month", "Twice a month"], c: 1 }
+    ];
+
+    let cur = 0;
+    function loadQ() {
+        const div = document.getElementById('options');
+        const txt = document.getElementById('qText');
+        const res = document.getElementById('res');
+        const btn = document.getElementById('nBtn');
+        if(cur >= quiz.length) {
+            txt.innerText = "¡Completado! 🎓";
+            div.innerHTML = "<p>Has terminado el tutorial interactivo.</p>";
+            res.innerText = ""; btn.style.display = 'none'; return;
+        }
+        txt.innerText = `${cur+1}. ${quiz[cur].q}`;
+        div.innerHTML = ""; res.innerText = ""; btn.style.display = 'none';
+        quiz[cur].o.forEach((o, i) => {
+            const d = document.createElement('div');
+            d.className = 'quiz-option'; d.innerText = o;
+            d.onclick = () => {
+                if(i === quiz[cur].c) { d.style.background = "#22c55e"; res.innerText = "¡Correcto!"; }
+                else { d.style.background = "#ef4444"; res.innerText = "Error. Revisa la teoría."; }
+                Array.from(div.children).forEach(c => c.style.pointerEvents = 'none');
+                cur++; btn.style.display = 'block';
+            };
+            div.appendChild(d);
+        });
+    }
+    loadQ();
+</script>
+</body>
+</html>
+</template>
+
+<!-- Template embebido para Future Simple (Will) (se carga en iframe dentro del modal) -->
+<template id="fsAppendDoc">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Simple Future (Will) - LuisThree Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #06b6d4; --secondary: #3b82f6; --bg: #0f172a;
+            --card-bg: #1e293b; --text: #f8fafc; --accent: #a5f3fc;
+            --success: #22c55e; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.8; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: 3px solid var(--primary); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: thin; }
+        .tab-btn { background: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
+        .tab-btn.active { background: var(--primary); border-color: var(--accent); box-shadow: 0 0 15px rgba(6, 182, 212, 0.6); }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h3 { color: var(--primary); margin: 25px 0 10px 0; font-size: 1.3rem; }
+
+        .example-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .example-item { background: #0b0f1a; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--primary); font-family: 'Courier New', monospace; font-size: 1rem; color: #a5f3fc; }
+        .trans { display: block; font-family: 'Poppins', sans-serif; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; font-style: italic; }
+
+        .note { background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); padding: 15px; margin: 20px 0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        th { background: var(--secondary); }
+
+        .quiz-option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .quiz-option:hover { background: rgba(6, 182, 212, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mastering Simple Future (Will)</h1>
+        <p>Tutorial de Futuro con Will para Hispanohablantes</p>
+    </header>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/kt1W7Wkfuow" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'estructura')">1. Estructura</button>
+        <button class="tab-btn" onclick="openTab(event, 'respuestas')">2. Respuestas</button>
+        <button class="tab-btn" onclick="openTab(event, 'uso')">3. El Uso</button>
+        <button class="tab-btn" onclick="openTab(event, 'adverbios')">4. Adverbios</button>
+        <button class="tab-btn" onclick="openTab(event, 'ortografia')">5. Contracciones</button>
+        <button class="tab-btn" onclick="openTab(event, 'ejemplos')">6. Ejemplos Finales</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">🔥 Examen</button>
+    </nav>
+
+    <section id="estructura" class="content-section active">
+        <div class="card">
+            <h2>Estructura Gramatical</h2>
+            <p>El futuro con <b>Will</b> es uno de los tiempos más sencillos porque no cambia según la persona (I, You, He, She, etc., todos usan Will).</p>
+            <ul>
+                <li><b>Afirmativa:</b> Sujeto + <b>Will</b> + Verbo (forma base) + Complemento.</li>
+                <li><b>Negativa:</b> Sujeto + <b>Won't</b> (will not) + Verbo (forma base).</li>
+                <li><b>Interrogativa:</b> <b>Will</b> + Sujeto + Verbo (forma base)?</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Estructura:</h3>
+                <div class="example-item">1. You <b>will pass</b> English.<span class="trans">(Tú aprobarás el inglés - Afirmativa)</span></div>
+                <div class="example-item">2. She <b>will fail</b> French.<span class="trans">(Ella suspenderá el francés - Afirmativa)</span></div>
+                <div class="example-item">3. You <b>won't pass</b> English.<span class="trans">(Tú no aprobarás el inglés - Negativa)</span></div>
+                <div class="example-item">4. She <b>won't fail</b> French.<span class="trans">(Ella no suspenderá el francés - Negativa)</span></div>
+                <div class="example-item">5. <b>Will</b> you study tonight?<span class="trans">(¿Estudiarás esta noche? - Interrogativa)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="respuestas" class="content-section">
+        <div class="card">
+            <h2>Short Answers (Respuestas Cortas)</h2>
+            <p>Para responder de forma natural, utilizamos "Yes, [sujeto] will" o "No, [sujeto] won't".</p>
+            <div class="example-list">
+                <h3>Ejemplos de Respuestas:</h3>
+                <div class="example-item">1. Will you pass? - <b>Yes, I will.</b><span class="trans">(¿Aprobarás? - Sí)</span></div>
+                <div class="example-item">2. Will you pass? - <b>No, I won't.</b><span class="trans">(¿Aprobarás? - No)</span></div>
+                <div class="example-item">3. Will she fail? - <b>Yes, she will.</b><span class="trans">(¿Suspenderá ella? - Sí)</span></div>
+                <div class="example-item">4. Will she fail? - <b>No, she won't.</b><span class="trans">(¿Suspenderá ella? - No)</span></div>
+                <div class="example-item">5. Will it rain? - <b>Yes, it will.</b><span class="trans">(¿Lloverá? - Sí)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="uso" class="content-section">
+        <div class="card">
+            <h2>¿Cuándo usar Will?</h2>
+            <p>A diferencia de otros futuros, Will se usa principalmente para:</p>
+            <ul>
+                <li><b>Predicciones:</b> Cosas que creemos que pasarán.</li>
+                <li><b>Ofrecimientos:</b> Cuando te prestas a ayudar a alguien.</li>
+                <li><b>Peticiones:</b> Cuando pides que alguien haga algo por ti.</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Uso:</h3>
+                <div class="example-item">1. I <b>will help</b> you.<span class="trans">(Yo te ayudaré - Ofrecimiento)</span></div>
+                <div class="example-item">2. <b>Will</b> you <b>help</b> me?<span class="trans">(¿Me ayudas/ayudarás? - Petición)</span></div>
+                <div class="example-item">3. It <b>will be</b> a sunny day.<span class="trans">(Será un día soleado - Predicción)</span></div>
+                <div class="example-item">4. I <b>will open</b> the door for you.<span class="trans">(Yo te abriré la puerta - Ofrecimiento)</span></div>
+                <div class="example-item">5. They <b>will win</b> the match.<span class="trans">(Ellos ganarán el partido - Predicción)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="adverbios" class="content-section">
+        <div class="card">
+            <h2>Adverbios de Futuro</h2>
+            <p>Palabras clave que nos indican que la acción ocurrirá más adelante.</p>
+            <table>
+                <tr><th>Adverbio</th><th>Uso/Significado</th></tr>
+                <tr><td>Tomorrow</td><td>Mañana</td></tr>
+                <tr><td>Next (week/month/year)</td><td>El/La próximo/a (semana/mes/año)</td></tr>
+                <tr><td>In (two weeks/days)</td><td>Dentro de... / En...</td></tr>
+            </table>
+            <div class="note">⚠️ <b>Error común:</b> No digas "The next week". Lo correcto es simplemente <b>Next week</b>.</div>
+            <div class="example-list">
+                <h3>Ejemplos con Adverbios:</h3>
+                <div class="example-item">1. I will see you <b>tomorrow</b>.<span class="trans">(Te veré mañana)</span></div>
+                <div class="example-item">2. She will get married <b>next month</b>.<span class="trans">(Ella se casará el mes que viene)</span></div>
+                <div class="example-item">3. You will go to France <b>in two months</b>.<span class="trans">(Irás a Francia dentro de dos meses)</span></div>
+                <div class="example-item">4. We will finish <b>next Sunday</b>.<span class="trans">(Terminaremos el próximo domingo)</span></div>
+                <div class="example-item">5. I will call you <b>in three days</b>.<span class="trans">(Te llamaré en tres días)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ortografia" class="content-section">
+        <div class="card">
+            <h2>Contracciones y Ortografía</h2>
+            <p>En el lenguaje hablado, es muy común contraer el Will tanto en afirmativa como en negativa.</p>
+            <ul>
+                <li><b>Afirmativa:</b> I will -> <b>I'll</b> / You will -> <b>You'll</b> / It will -> <b>It'll</b>.</li>
+                <li><b>Negativa:</b> Will not -> <b>Won't</b>.</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Contracciones:</h3>
+                <div class="example-item">1. <b>I'll</b> see you tomorrow.<span class="trans">(Te veré mañana - Contraído)</span></div>
+                <div class="example-item">2. <b>They'll</b> arrive late.<span class="trans">(Ellos llegarán tarde)</span></div>
+                <div class="example-item">3. <b>He won't</b> come to the party.<span class="trans">(Él no vendrá a la fiesta)</span></div>
+                <div class="example-item">4. <b>We'll</b> help you later.<span class="trans">(Te ayudaremos más tarde)</span></div>
+                <div class="example-item">5. <b>It'll</b> be cold tonight.<span class="trans">(Hará frío esta noche)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejemplos" class="content-section">
+        <div class="card">
+            <h2>Práctica de Consolidación</h2>
+            <p>Repaso de oraciones mezcladas según el tutorial de LuisThree:</p>
+            <div class="example-list">
+                <div class="example-item">1. She <b>will get married</b> next month.<span class="trans">(Ella se casará el mes que viene)</span></div>
+                <div class="example-item">2. You <b>will go</b> to France in two months.<span class="trans">(Irás a Francia en dos meses)</span></div>
+                <div class="example-item">3. <b>I'll</b> see you tomorrow.<span class="trans">(Te veré mañana)</span></div>
+                <div class="example-item">4. <b>Won't</b> you stay for dinner?<span class="trans">(¿No te quedarás a cenar? - Pregunta negativa)</span></div>
+                <div class="example-item">5. <b>Will</b> you help me with this?<span class="trans">(¿Me ayudas con esto? - Petición)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="card">
+            <h2 id="qText">Examen de Futuro Simple</h2>
+            <div id="options"></div>
+            <p id="res" style="margin-top:15px; font-weight:bold;"></p>
+            <button id="nBtn" class="tab-btn" style="display:none; margin-top:15px;" onclick="loadQ()">Siguiente</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openTab(evt, name) {
+        let i, content, btn;
+        content = document.getElementsByClassName("content-section");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        btn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
+        document.getElementById(name).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo({top: 450, behavior: 'smooth'});
+    }
+
+    const quiz = [
+        { q: "¿Cuál es la contracción negativa de 'Will not'?", o: ["Willn't", "Wont", "Won't"], c: 2 },
+        { q: "¿Cuál de estas frases es CORRECTA?", o: ["The next week", "Next week", "Next the week"], c: 1 },
+        { q: "¿Para qué se usa Will principalmente?", o: ["Acciones ahora", "Rutinas pasadas", "Predicciones y ofrecimientos"], c: 2 },
+        { q: "Respuesta corta: 'Will you help me?'", o: ["Yes, I help", "Yes, I will", "Yes, I'm"], c: 1 },
+        { q: "¿Cómo se dice 'Dentro de dos semanas'?", o: ["In two weeks", "Ago two weeks", "Next two weeks"], c: 0 }
+    ];
+
+    let cur = 0;
+    function loadQ() {
+        const div = document.getElementById('options');
+        const txt = document.getElementById('qText');
+        const res = document.getElementById('res');
+        const btn = document.getElementById('nBtn');
+        if(cur >= quiz.length) {
+            txt.innerText = "¡Enhorabuena! 🎓";
+            div.innerHTML = "<p>Has completado el curso de Futuro Simple con Will.</p>";
+            res.innerText = ""; btn.style.display = 'none'; return;
+        }
+        txt.innerText = `${cur+1}. ${quiz[cur].q}`;
+        div.innerHTML = ""; res.innerText = ""; btn.style.display = 'none';
+        quiz[cur].o.forEach((o, i) => {
+            const d = document.createElement('div');
+            d.className = 'quiz-option'; d.innerText = o;
+            d.onclick = () => {
+                if(i === quiz[cur].c) { d.style.background = "#22c55e"; res.innerText = "¡Correcto! ✨"; }
+                else { d.style.background = "#ef4444"; res.innerText = "Error. Repasa los adverbios."; }
+                Array.from(div.children).forEach(c => c.style.pointerEvents = 'none');
+                cur++; btn.style.display = 'block';
+            };
+            div.appendChild(d);
+        });
+    }
+    loadQ();
+</script>
+</body>
+</html>
+</template>
+
+<template id="psAppendDoc">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Past Simple - LuisThree Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f43f5e; --secondary: #fb923c; --bg: #0f172a;
+            --card-bg: #1e293b; --text: #f8fafc; --accent: #38bdf8;
+            --success: #22c55e; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.8; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: 3px solid var(--primary); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: thin; }
+        .tab-btn { background: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
+        .tab-btn.active { background: var(--primary); border-color: var(--accent); box-shadow: 0 0 15px rgba(244, 63, 94, 0.6); }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h3 { color: var(--secondary); margin: 25px 0 10px 0; font-size: 1.3rem; }
+
+        .example-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .example-item { background: #0b0f1a; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--accent); font-family: 'Courier New', monospace; font-size: 1rem; color: #a5f3fc; }
+        .trans { display: block; font-family: 'Poppins', sans-serif; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; font-style: italic; }
+
+        .note { background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); padding: 15px; margin: 20px 0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        th { background: var(--primary); }
+
+        .quiz-option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .quiz-option:hover { background: rgba(244, 63, 94, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mastering Past Simple</h1>
+        <p>Tutorial de Pasado Simple para Hispanohablantes</p>
+    </header>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/RI0W_AqYZlQ" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'verbos')">1. Regulares vs Irregulares</button>
+        <button class="tab-btn" onclick="openTab(event, 'estructura')">2. Estructura</button>
+        <button class="tab-btn" onclick="openTab(event, 'respuestas')">3. Respuestas</button>
+        <button class="tab-btn" onclick="openTab(event, 'adverbios')">4. Adverbios</button>
+        <button class="tab-btn" onclick="openTab(event, 'ortografia')">5. Ortografía</button>
+        <button class="tab-btn" onclick="openTab(event, 'preguntas')">6. WH- Questions</button>
+        <button class="tab-btn" onclick="openTab(event, 'ejemplos')">7. Ejemplos Mixtos</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">🔥 Examen</button>
+    </nav>
+
+    <section id="verbos" class="content-section active">
+        <div class="card">
+            <h2>Tipos de Verbos en Pasado</h2>
+            <p>En el pasado simple, lo primero es distinguir entre dos tipos de verbos:</p>
+            <ul>
+                <li><b>Verbos Regulares:</b> Se forman añadiendo <b>-ed</b> a la forma base.</li>
+                <li><b>Verbos Irregulares:</b> Tienen una forma propia. Debes usar la <b>segunda columna</b> de la lista de verbos irregulares.</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Formación:</h3>
+                <div class="example-item">1. Work -> <b>Worked</b> <span class="trans">(Trabajé - Regular)</span></div>
+                <div class="example-item">2. Drink -> <b>Drank</b> <span class="trans">(Bebí - Irregular, 2ª columna)</span></div>
+                <div class="example-item">3. Wash -> <b>Washed</b> <span class="trans">(Lavé - Regular)</span></div>
+                <div class="example-item">4. Break -> <b>Broke</b> <span class="trans">(Rompí - Irregular, 2ª columna)</span></div>
+                <div class="example-item">5. See -> <b>Saw</b> <span class="trans">(Vi - Irregular, 2ª columna)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="estructura" class="content-section">
+        <div class="card">
+            <h2>Estructura (+ / - / ?)</h2>
+            <p>A diferencia del presente, en el pasado **no hay cambios por persona** (He/She/It usan el mismo verbo que los demás).</p>
+            <ul>
+                <li><b>Afirmativa:</b> Sujeto + Verbo en Pasado (-ed o 2ª columna).</li>
+                <li><b>Negativa:</b> Sujeto + <b>didn't</b> + Verbo en Forma Base (sin -ed / 1ª columna).</li>
+                <li><b>Interrogativa:</b> <b>Did</b> + Sujeto + Verbo en Forma Base.</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Estructura:</h3>
+                <div class="example-item">1. He <b>washed</b> his car.<span class="trans">(Él lavó su coche - Afirmativa)</span></div>
+                <div class="example-item">2. She <b>drank</b> some beer.<span class="trans">(Ella bebió algo de cerveza - Afirmativa)</span></div>
+                <div class="example-item">3. He <b>didn't wash</b> his car.<span class="trans">(Él no lavó su coche - Negativa: el verbo vuelve al presente)</span></div>
+                <div class="example-item">4. She <b>didn't drink</b> any beer.<span class="trans">(Ella no bebió nada de cerveza - Negativa)</span></div>
+                <div class="example-item">5. <b>Did</b> you buy that car?<span class="trans">(¿Compraste ese coche? - Interrogativa)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="respuestas" class="content-section">
+        <div class="card">
+            <h2>Short Answers (Respuestas Cortas)</h2>
+            <p>Usamos el auxiliar <b>did</b> o <b>didn't</b> para responder de forma natural.</p>
+            <div class="example-list">
+                <h3>Ejemplos de Respuestas:</h3>
+                <div class="example-item">Did he wash the car? - <b>Yes, he did.</b><span class="trans">(¿Lavó el coche? - Sí)</span></div>
+                <div class="example-item">Did she drink beer? - <b>No, she didn't.</b><span class="trans">(¿Bebió cerveza? - No)</span></div>
+                <div class="example-item">Did you see her? - <b>Yes, I did.</b><span class="trans">(¿La viste? - Sí)</span></div>
+                <div class="example-item">Did they go? - <b>No, they didn't.</b><span class="trans">(¿Se fueron? - No)</span></div>
+                <div class="example-item">Did it work? - <b>Yes, it did.</b><span class="trans">(¿Funcionó? - Sí)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="adverbios" class="content-section">
+        <div class="card">
+            <h2>Adverbios de Tiempo en Pasado</h2>
+            <p>Se utilizan para situar la acción en un momento ya acabado.</p>
+            <table>
+                <tr><th>Adverbio</th><th>Uso/Significado</th></tr>
+                <tr><td>Yesterday</td><td>Ayer</td></tr>
+                <tr><td>Last (week/month/year)</td><td>El/La pasado/a (semana/mes/año)</td></tr>
+                <tr><td>Ago</td><td>Hace... (se pone al final: two days ago)</td></tr>
+            </table>
+            <div class="note">⚠️ <b>Error común:</b> No digas "The Last week". En inglés se dice simplemente <b>Last week</b>.</div>
+            <div class="example-list">
+                <h3>Ejemplos con Adverbios:</h3>
+                <div class="example-item">1. I saw your sister <b>yesterday</b>.<span class="trans">(Vi a tu hermana ayer)</span></div>
+                <div class="example-item">2. She went to England <b>last year</b>.<span class="trans">(Ella fue a Inglaterra el año pasado)</span></div>
+                <div class="example-item">3. I talked to him <b>two hours ago</b>.<span class="trans">(Hablé con él hace dos horas)</span></div>
+                <div class="example-item">4. We finished the project <b>last month</b>.<span class="trans">(Terminamos el proyecto el mes pasado)</span></div>
+                <div class="example-item">5. They arrived <b>five minutes ago</b>.<span class="trans">(Llegaron hace cinco minutos)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ortografia" class="content-section">
+        <div class="card">
+            <h2>Reglas Ortográficas (Verbos Regulares)</h2>
+            <p>Al añadir <b>-ed</b>, algunos verbos cambian:</p>
+            <ul>
+                <li><b>Consonante + Y:</b> Cambia a <b>-ied</b> (Study -> Studied).</li>
+                <li><b>Monosílabos (Vocal + Consonante):</b> Doblan la consonante (Stop -> Stopped).</li>
+                <li><b>Excepción:</b> <b>Travel</b> -> Travelled (Dobla la 'L' aunque no sea aguda).</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Ortografía:</h3>
+                <div class="example-item">1. He <b>studied</b> for the exam.<span class="trans">(Él estudió para el examen)</span></div>
+                <div class="example-item">2. The car <b>stopped</b> suddenly.<span class="trans">(El coche se paró de repente)</span></div>
+                <div class="example-item">3. We <b>travelled</b> to France.<span class="trans">(Viajamos a Francia)</span></div>
+                <div class="example-item">4. She <b>admitted</b> the truth.<span class="trans">(Ella admitió la verdad - Se dobla por ser aguda)</span></div>
+                <div class="example-item">5. They <b>cried</b> during the movie.<span class="trans">(Ellos lloraron durante la película)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="preguntas" class="content-section">
+        <div class="card">
+            <h2>Preguntas WH- en Pasado</h2>
+            <p>Estructura: <b>Palabra WH + Did + Sujeto + Verbo Base.</b></p>
+            <div class="example-list">
+                <h3>Ejemplos WH-:</h3>
+                <div class="example-item">1. <b>What</b> did you say?<span class="trans">(¿Qué dijiste?)</span></div>
+                <div class="example-item">2. <b>Where</b> did you go?<span class="trans">(¿A dónde fuiste?)</span></div>
+                <div class="example-item">3. <b>When</b> did they arrive?<span class="trans">(¿Cuándo llegaron?)</span></div>
+                <div class="example-item">4. <b>Why</b> did she cry?<span class="trans">(¿Por qué lloró ella?)</span></div>
+                <div class="example-item">5. <b>How</b> did you do it?<span class="trans">(¿Cómo lo hiciste?)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejemplos" class="content-section">
+        <div class="card">
+            <h2>Práctica Combinada</h2>
+            <p>Repaso de verbos regulares e irregulares en diferentes contextos:</p>
+            <div class="example-list">
+                <div class="example-item">1. You <b>broke</b> the window.<span class="trans">(Tú rompiste la ventana - Irregular)</span></div>
+                <div class="example-item">2. I <b>talked</b> to him two hours ago.<span class="trans">(Hablé con él hace dos horas - Regular)</span></div>
+                <div class="example-item">3. She <b>didn't go</b> to England last year.<span class="trans">(Ella no fue a Inglaterra el año pasado)</span></div>
+                <div class="example-item">4. <b>Did</b> you buy that car?<span class="trans">(¿Compraste ese coche?)</span></div>
+                <div class="example-item">5. I <b>saw</b> your sister yesterday.<span class="trans">(Vi a tu hermana ayer - Irregular)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="card">
+            <h2 id="qText">Examen de Pasado Simple</h2>
+            <div id="options"></div>
+            <p id="res" style="margin-top:15px; font-weight:bold;"></p>
+            <button id="nBtn" class="tab-btn" style="display:none; margin-top:15px;" onclick="loadQ()">Siguiente</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openTab(evt, name) {
+        let i, content, btn;
+        content = document.getElementsByClassName("content-section");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        btn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
+        document.getElementById(name).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo({top: 450, behavior: 'smooth'});
+    }
+
+    const quiz = [
+        { q: "¿Cuál es el pasado del verbo irregular 'Drink'?", o: ["Drinked", "Drank", "Drunk"], c: 1 },
+        { q: "En la negativa 'She didn't...', el verbo va en:", o: ["Pasado (-ed)", "Forma base (Presente)", "Gerundio (-ing)"], c: 1 },
+        { q: "¿Cuál es el error en: 'The last week'?", o: ["No lleva 'The'", "No lleva 'Last'", "Está correcto"], c: 0 },
+        { q: "Pasado de 'Stop' (Monosílabo):", o: ["Stoped", "Stopped", "Stopied"], c: 1 },
+        { q: "¿Cómo se dice 'Hace dos días'?", o: ["Two days ago", "Ago two days", "Before two days"], c: 0 }
+    ];
+
+    let cur = 0;
+    function loadQ() {
+        const div = document.getElementById('options');
+        const txt = document.getElementById('qText');
+        const res = document.getElementById('res');
+        const btn = document.getElementById('nBtn');
+        if(cur >= quiz.length) {
+            txt.innerText = "¡Misión Cumplida! 🏆";
+            div.innerHTML = "<p>Has dominado el Pasado Simple.</p>";
+            res.innerText = ""; btn.style.display = 'none'; return;
+        }
+        txt.innerText = `${cur+1}. ${quiz[cur].q}`;
+        div.innerHTML = ""; res.innerText = ""; btn.style.display = 'none';
+        quiz[cur].o.forEach((o, i) => {
+            const d = document.createElement('div');
+            d.className = 'quiz-option'; d.innerText = o;
+            d.onclick = () => {
+                if(i === quiz[cur].c) { d.style.background = "#22c55e"; res.innerText = "¡Correcto! ✨"; }
+                else { d.style.background = "#ef4444"; res.innerText = "Incorrecto. Mira la pestaña de reglas."; }
+                Array.from(div.children).forEach(c => c.style.pointerEvents = 'none');
+                cur++; btn.style.display = 'block';
+            };
+            div.appendChild(d);
+        });
+    }
+    loadQ();
+</script>
+</body>
+</html>
+</template>
+
+<template id="prpAppendDoc">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Present Perfect - LuisThree Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6; --secondary: #d946ef; --bg: #0f172a;
+            --card-bg: #1e293b; --text: #f8fafc; --accent: #f472b6;
+            --success: #22c55e; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.8; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: 3px solid var(--primary); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: thin; }
+        .tab-btn { background: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
+        .tab-btn.active { background: var(--primary); border-color: var(--accent); box-shadow: 0 0 15px rgba(139, 92, 246, 0.6); }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h3 { color: var(--secondary); margin: 25px 0 10px 0; font-size: 1.3rem; }
+
+        .example-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .example-item { background: #0b0f1a; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--accent); font-family: 'Courier New', monospace; font-size: 1rem; color: #fdf2f8; }
+        .trans { display: block; font-family: 'Poppins', sans-serif; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; font-style: italic; }
+
+        .note { background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); padding: 15px; margin: 20px 0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        th { background: var(--primary); }
+
+        .quiz-option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .quiz-option:hover { background: rgba(139, 92, 246, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mastering Present Perfect</h1>
+        <p>Tutorial de Presente Perfecto para Hispanohablantes</p>
+    </header>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/bpjfIF988dA" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'estructura')">1. Estructura</button>
+        <button class="tab-btn" onclick="openTab(event, 'respuestas')">2. Respuestas</button>
+        <button class="tab-btn" onclick="openTab(event, 'uso')">3. El Uso</button>
+        <button class="tab-btn" onclick="openTab(event, 'adverbios')">4. Adverbios (Yet/Already/Just)</button>
+        <button class="tab-btn" onclick="openTab(event, 'forsince')">5. For vs Since</button>
+        <button class="tab-btn" onclick="openTab(event, 'ejemplos')">6. Práctica Final</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">🔥 Examen</button>
+    </nav>
+
+    <section id="estructura" class="content-section active">
+        <div class="card">
+            <h2>Estructura Gramatical</h2>
+            <p>Para formar el Presente Perfecto necesitamos dos cosas: el auxiliar <b>have/has</b> y el <b>participio</b> del verbo.</p>
+            <ul>
+                <li><b>Auxiliar:</b> Usamos <b>Have</b> para (I, You, We, They) y <b>Has</b> para la 3ª persona (He, She, It).</li>
+                <li><b>Participio:</b> Si el verbo es regular termina en <b>-ed</b>. Si es irregular, usamos la <b>3ª columna</b>.</li>
+                <li><b>Estructuras:</b> Sujeto + Have/Has + Participio. Para negar: <b>Haven't/Hasn't</b>. Para preguntar: <b>Have/Has</b> al principio.</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Estructura:</h3>
+                <div class="example-item">1. You <b>have played</b> tennis.<span class="trans">(Tú has jugado al tenis - Regular)</span></div>
+                <div class="example-item">2. She <b>has eaten</b> a sandwich.<span class="trans">(Ella ha comido un sándwich - Irregular, 3ª columna)</span></div>
+                <div class="example-item">3. He <b>hasn't watched</b> the match.<span class="trans">(Él no ha visto el partido - Negativa)</span></div>
+                <div class="example-item">4. <b>Have</b> you <b>done</b> your homework?<span class="trans">(¿Has hecho tus deberes? - Interrogativa)</span></div>
+                <div class="example-item">5. <b>Where has</b> she <b>gone</b>?<span class="trans">(¿A dónde ha ido ella? - Pregunta WH)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="respuestas" class="content-section">
+        <div class="card">
+            <h2>Short Answers (Respuestas Cortas)</h2>
+            <p>Se responde repitiendo el auxiliar <b>have/has</b> o <b>haven't/hasn't</b>.</p>
+            <div class="example-list">
+                <h3>Ejemplos de Respuestas:</h3>
+                <div class="example-item">1. Have you played? - <b>Yes, I have.</b><span class="trans">(¿Has jugado? - Sí)</span></div>
+                <div class="example-item">2. Have you played? - <b>No, I haven't.</b><span class="trans">(¿Has jugado? - No)</span></div>
+                <div class="example-item">3. Has he watched it? - <b>Yes, he has.</b><span class="trans">(¿Lo ha visto? - Sí)</span></div>
+                <div class="example-item">4. Has he watched it? - <b>No, he hasn't.</b><span class="trans">(¿Lo ha visto? - No)</span></div>
+                <div class="example-item">5. Has she eaten? - <b>Yes, she has.</b><span class="trans">(¿Ha comido? - Sí)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="uso" class="content-section">
+        <div class="card">
+            <h2>¿Cuándo se usa?</h2>
+            <p>Se usa para acciones que ocurrieron en el pasado pero tienen conexión con el presente, o en un periodo de tiempo que aún no ha terminado (como "esta mañana").</p>
+            <div class="example-list">
+                <h3>Ejemplos de Uso:</h3>
+                <div class="example-item">1. I <b>have eaten</b> chips this morning.<span class="trans">(He comido patatas esta mañana - Sigue siendo por la mañana)</span></div>
+                <div class="example-item">2. I <b>have bought</b> a car.<span class="trans">(He comprado un coche - Lo tengo ahora, conexión presente)</span></div>
+                <div class="example-item">3. <b>I've finished</b> my work.<span class="trans">(He terminado mi trabajo - Acción reciente)</span></div>
+                <div class="example-item">4. She <b>has seen</b> that movie.<span class="trans">(Ella ha visto esa película - Experiencia pasada)</span></div>
+                <div class="example-item">5. We <b>have lived</b> here for years.<span class="trans">(Hemos vivido aquí por años - Seguimos viviendo aquí)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="adverbios" class="content-section">
+        <div class="card">
+            <h2>Adverbios Clave: Yet, Already, Just</h2>
+            <p>Estos adverbios cambian su significado y posición según la frase:</p>
+            <ul>
+                <li><b>Yet:</b> Significa "ya" en interrogativas y "todavía" en negativas. Va al <b>final</b> de la oración.</li>
+                <li><b>Already:</b> Significa "ya" en afirmativas. Va <b>delante</b> del participio.</li>
+                <li><b>Just:</b> Indica que algo acaba de ocurrir. Se traduce como "acabar de". Va <b>delante</b> del participio.</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos con Adverbios:</h3>
+                <div class="example-item">1. Have you finished <b>yet</b>?<span class="trans">(¿Has terminado ya? - Interrogativa)</span></div>
+                <div class="example-item">2. I haven't finished <b>yet</b>.<span class="trans">(No he terminado todavía - Negativa)</span></div>
+                <div class="example-item">3. I have <b>already</b> finished.<span class="trans">(Yo ya he terminado - Afirmativa)</span></div>
+                <div class="example-item">4. I have <b>just</b> seen Mary.<span class="trans">(Acabo de ver a Mary - Recién ocurrido)</span></div>
+                <div class="example-item">5. I've <b>just</b> drunk some water.<span class="trans">(Acabo de beber algo de agua)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="forsince" class="content-section">
+        <div class="card">
+            <h2>For vs Since (Desde / Desde hace)</h2>
+            <p>Se usan para indicar la duración de una acción:</p>
+            <ul>
+                <li><b>For:</b> Significa "desde hace". Se usa para un <b>periodo de tiempo</b> (2 años, 3 meses).</li>
+                <li><b>Since:</b> Significa "desde". Se usa para un <b>punto concreto</b> en el tiempo (2011, el lunes, las 5:00).</li>
+            </ul>
+            <div class="note">⚠️ <b>Diferencia cultural:</b> En español decimos "conozco a Pedro desde hace 2 años" (presente), pero en inglés debemos usar Present Perfect: <b>I have known Pedro for 2 years</b>.</div>
+            <div class="example-list">
+                <h3>Ejemplos de For/Since:</h3>
+                <div class="example-item">1. I have lived here <b>for</b> two years.<span class="trans">(He vivido aquí desde hace dos años)</span></div>
+                <div class="example-item">2. I have lived here <b>since</b> 2011.<span class="trans">(He vivido aquí desde 2011)</span></div>
+                <div class="example-item">3. I've had this book <b>since</b> last year.<span class="trans">(Tengo/He tenido este libro desde el año pasado)</span></div>
+                <div class="example-item">4. She hasn't seen her mom <b>for</b> weeks.<span class="trans">(Ella no ha visto a su madre desde hace semanas)</span></div>
+                <div class="example-item">5. We've been friends <b>since</b> we were kids.<span class="trans">(Hemos sido amigos desde que éramos niños)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejemplos" class="content-section">
+        <div class="card">
+            <h2>Resumen de Práctica</h2>
+            <p>Recuerda que <b>I have</b> se contrae como <b>I've</b> y <b>She has</b> como <b>She's</b> (no confundir con "She is").</p>
+            <div class="example-list">
+                <div class="example-item">1. I've already finished my homework.<span class="trans">(Ya he terminado mis deberes)</span></div>
+                <div class="example-item">2. I haven't had lunch yet.<span class="trans">(No he almorzado todavía)</span></div>
+                <div class="example-item">3. Have you seen the pictures yet?<span class="trans">(¿Has visto las fotos ya?)</span></div>
+                <div class="example-item">4. I have known him for a long time.<span class="trans">(Le conozco desde hace mucho tiempo)</span></div>
+                <div class="example-item">5. She's eaten chips this morning.<span class="trans">(Ella ha comido patatas esta mañana)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="card">
+            <h2 id="qText">Examen de Presente Perfecto</h2>
+            <div id="options"></div>
+            <p id="res" style="margin-top:15px; font-weight:bold;"></p>
+            <button id="nBtn" class="tab-btn" style="display:none; margin-top:15px;" onclick="loadQ()">Siguiente</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openTab(evt, name) {
+        let i, content, btn;
+        content = document.getElementsByClassName("content-section");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        btn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
+        document.getElementById(name).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo({top: 450, behavior: 'smooth'});
+    }
+
+    const quiz = [
+        { q: "¿Cuál es el participio (3ª columna) de 'Eat'?", o: ["Eated", "Ate", "Eaten"], c: 2 },
+        { q: "En negativa, ¿dónde se coloca 'Yet'?", o: ["Al final", "Delante del verbo", "Al principio"], c: 0 },
+        { q: "¿Cómo se traduce 'I have just seen her'?", o: ["Ya la he visto", "Todavía no la he visto", "Acabo de verla"], c: 2 },
+        { q: "¿Cuál es correcto para un periodo: '2 years'?", o: ["Since 2 years", "For 2 years", "Ago 2 years"], c: 1 },
+        { q: "¿Cuál es la contracción de 'He has'?", o: ["He's", "He've", "He'h"], c: 0 }
+    ];
+
+    let cur = 0;
+    function loadQ() {
+        const div = document.getElementById('options');
+        const txt = document.getElementById('qText');
+        const res = document.getElementById('res');
+        const btn = document.getElementById('nBtn');
+        if(cur >= quiz.length) {
+            txt.innerText = "¡Excelente Trabajo! 🌟";
+            div.innerHTML = "<p>Has dominado el Presente Perfecto.</p>";
+            res.innerText = ""; btn.style.display = 'none'; return;
+        }
+        txt.innerText = `${cur+1}. ${quiz[cur].q}`;
+        div.innerHTML = ""; res.innerText = ""; btn.style.display = 'none';
+        quiz[cur].o.forEach((o, i) => {
+            const d = document.createElement('div');
+            d.className = 'quiz-option'; d.innerText = o;
+            d.onclick = () => {
+                if(i === quiz[cur].c) { d.style.background = "#22c55e"; res.innerText = "¡Correcto! ✨"; }
+                else { d.style.background = "#ef4444"; res.innerText = "Error. Revisa la pestaña de adverbios."; }
+                Array.from(div.children).forEach(c => c.style.pointerEvents = 'none');
+                cur++; btn.style.display = 'block';
+            };
+            div.appendChild(d);
+        });
+    }
+    loadQ();
+</script>
+</body>
+</html>
+</template>
+
+<!-- Template embebido para Present Perfect Continuous (se carga en iframe dentro del modal) -->
+<template id="prpcAppendDoc">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Present Perfect Continuous - LuisThree</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6; --secondary: #6d28d9; --bg: #0f172a;
+            --card-bg: #1e293b; --text: #f8fafc; --accent: #a78bfa;
+            --success: #22c55e; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.8; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        
+        header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: 3px solid var(--primary); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: thin; }
+        .tab-btn { background: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
+        .tab-btn.active { background: var(--primary); border-color: var(--accent); box-shadow: 0 0 15px rgba(139, 92, 246, 0.6); }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h3 { color: var(--accent); margin: 25px 0 10px 0; font-size: 1.3rem; }
+        
+        .example-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .example-item { background: #0b0f1a; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--primary); font-family: 'Courier New', monospace; font-size: 1rem; color: #ede9fe; }
+        .trans { display: block; font-family: 'Poppins', sans-serif; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; font-style: italic; }
+
+        .note { background: rgba(139, 92, 246, 0.1); border-left: 4px solid var(--primary); padding: 15px; margin: 20px 0; border-radius: 8px; }
+
+        .quiz-option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .quiz-option:hover { background: rgba(139, 92, 246, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mastering Present Perfect Continuous</h1>
+        <p>Tutorial: "He estado haciendo" - LuisThree Edition</p>
+    </header>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/9vj5hNmQamU" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'estructura')">1. Estructura</button>
+        <button class="tab-btn" onclick="openTab(event, 'uso')">2. Uso y Énfasis</button>
+        <button class="tab-btn" onclick="openTab(event, 'adverbios')">3. For y Since</button>
+        <button class="tab-btn" onclick="openTab(event, 'ortografia')">4. Contracciones</button>
+        <button class="tab-btn" onclick="openTab(event, 'ejemplos')">5. Ejemplos Finales</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">🔥 Examen</button>
+    </nav>
+
+    <section id="estructura" class="content-section active">
+        <div class="card">
+            <h2>Cómo se forma</h2>
+            <p>Se utiliza el presente del verbo haber (<b>have/has</b>), el participio del verbo ser (<b>been</b>) que es fijo, y el verbo principal en <b>-ing</b>.</p>
+            <ul>
+                <li><b>Afirmativa:</b> Sujeto + <b>have/has been</b> + Verbo <b>-ing</b>.</li>
+                <li><b>Negativa:</b> Sujeto + <b>haven't/hasn't been</b> + Verbo <b>-ing</b>.</li>
+                <li><b>Interrogativa:</b> <b>Have/Has</b> + Sujeto + <b>been</b> + Verbo <b>-ing</b>?</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Estructura:</h3>
+                <div class="example-item">1. You <b>have been working</b> all day.<span class="trans">(Tú has estado trabajando todo el día)</span></div>
+                <div class="example-item">2. He <b>has been studying</b> English.<span class="trans">(Él ha estado estudiando inglés)</span></div>
+                <div class="example-item">3. I <b>haven't been sleeping</b> well.<span class="trans">(No he estado durmiendo bien - Negativa)</span></div>
+                <div class="example-item">4. <b>Has</b> he <b>been studying</b> English?<span class="trans">(¿Ha estado él estudiando inglés? - Interrogativa)</span></div>
+                <div class="example-item">5. <b>Have</b> you <b>been working</b>?<span class="trans">(¿Has estado trabajando?)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="uso" class="content-section">
+        <div class="card">
+            <h2>Uso y Diferencia</h2>
+            <p>Se traduce como "he estado..." o "llevo + gerundio" (llevo viviendo). Se usa igual que en español.</p>
+            <div class="note">💡 <b>Diferencia Clave:</b> A diferencia del Present Perfect simple (I have studied - he estudiado), el Continuous hace mucho más <b>énfasis en el esfuerzo</b> y el proceso de la acción.</div>
+            <div class="example-list">
+                <h3>Ejemplos de Uso:</h3>
+                <div class="example-item">1. I <b>have been living</b> in Murcia for two years.<span class="trans">(Llevo viviendo en Murcia desde hace dos años)</span></div>
+                <div class="example-item">2. She <b>has been cooking</b> all morning.<span class="trans">(Ella ha estado cocinando toda la mañana - Énfasis en el trabajo)</span></div>
+                <div class="example-item">3. We <b>have been waiting</b> for an hour.<span class="trans">(Llevamos esperando una hora)</span></div>
+                <div class="example-item">4. I <b>have been studying</b> (more emphasis) vs I <b>have studied</b> (more neutral).<span class="trans">(He estado estudiando vs He estudiado)</span></div>
+                <div class="example-item">5. It <b>has been raining</b> all day.<span class="trans">(Ha estado lloviendo todo el día)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="adverbios" class="content-section">
+        <div class="card">
+            <h2>For y Since</h2>
+            <p>Son los adverbios más comunes para indicar cuánto tiempo dura la acción:</p>
+            <ul>
+                <li><b>For:</b> "Durante" o "Desde hace". Se usa para periodos de tiempo.</li>
+                <li><b>Since:</b> "Desde". Se usa para un punto concreto en el tiempo.</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos con For/Since:</h3>
+                <div class="example-item">1. I have been playing tennis <b>for</b> two hours.<span class="trans">(He estado jugando al tenis durante dos horas)</span></div>
+                <div class="example-item">2. I have been playing chess <b>since</b> three o'clock.<span class="trans">(He estado jugando al ajedrez desde las tres)</span></div>
+                <div class="example-item">3. He's been working here <b>for</b> two months.<span class="trans">(Él ha estado trabajando aquí durante dos meses)</span></div>
+                <div class="example-item">4. She's been cooking <b>since</b> one o'clock.<span class="trans">(Ella ha estado cocinando desde la una)</span></div>
+                <div class="example-item">5. We've been living here <b>since</b> 2010.<span class="trans">(Llevamos viviendo aquí desde 2010)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ortografia" class="content-section">
+        <div class="card">
+            <h2>Contracciones (I've / He's)</h2>
+            <p>Es muy común contraer el sujeto con el auxiliar <b>have/has</b>.</p>
+            <div class="note">⚠️ <b>¡Ojo!:</b> 's puede ser <i>is</i> o <i>has</i>. Si después ves <b>been</b>, entonces ese 's es <b>has</b>.</div>
+            <div class="example-list">
+                <h3>Ejemplos de Contracciones:</h3>
+                <div class="example-item">1. <b>I've</b> been surfing the internet.<span class="trans">(He estado navegando por internet)</span></div>
+                <div class="example-item">2. <b>He's</b> been working here.<span class="trans">(Él ha estado trabajando aquí)</span></div>
+                <div class="example-item">3. <b>She's</b> been cooking.<span class="trans">(Ella ha estado cocinando)</span></div>
+                <div class="example-item">4. <b>You've</b> been doing a great job.<span class="trans">(Has estado haciendo un gran trabajo)</span></div>
+                <div class="example-item">5. <b>They've</b> been playing all day.<span class="trans">(Ellos han estado jugando todo el día)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejemplos" class="content-section">
+        <div class="card">
+            <h2>Resumen del Tutorial</h2>
+            <p>Oraciones clave para repasar todo lo aprendido:</p>
+            <div class="example-list">
+                <div class="example-item">1. <b>How long</b> have you been surfing the internet?<span class="trans">(¿Cuánto tiempo has estado navegando por internet?)</span></div>
+                <div class="example-item">2. I have been surfing the internet <b>for</b> three hours.<span class="trans">(He estado navegando por internet durante tres horas)</span></div>
+                <div class="example-item">3. He's been working here <b>for</b> two months.<span class="trans">(Lleva trabajando aquí dos meses)</span></div>
+                <div class="example-item">4. She's been cooking <b>since</b> one o'clock.<span class="trans">(Ha estado cocinando desde la una)</span></div>
+                <div class="example-item">5. Have you <b>been working</b> all day?<span class="trans">(¿Has estado trabajando todo el día?)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="card">
+            <h2 id="qText">Examen de Present Perfect Continuous</h2>
+            <div id="options"></div>
+            <p id="res" style="margin-top:15px; font-weight:bold;"></p>
+            <button id="nBtn" class="tab-btn" style="display:none; margin-top:15px;" onclick="loadQ()">Siguiente</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openTab(evt, name) {
+        let i, content, btn;
+        content = document.getElementsByClassName("content-section");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        btn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
+        document.getElementById(name).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo({top: 450, behavior: 'smooth'});
+    }
+
+    const quiz = [
+        { q: "¿Cuál es el auxiliar que siempre va fijo?", o: ["Have", "Has", "Been"], c: 2 },
+        { q: "Si quieres enfatizar el ESFUERZO, usas...", o: ["Present Perfect Simple", "Present Perfect Continuous", "Present Simple"], c: 1 },
+        { q: "¿Qué significa 'Since'?", o: ["Desde", "Durante", "Hace"], c: 0 },
+        { q: "Para 'He', usamos...", o: ["Have been", "Has been", "Has been -ed"], c: 1 },
+        { q: "¿Cómo se pregunta '¿Cuánto tiempo...?'", o: ["How many", "How much", "How long"], c: 2 }
+    ];
+
+    let cur = 0;
+    function loadQ() {
+        const div = document.getElementById('options');
+        const txt = document.getElementById('qText');
+        const res = document.getElementById('res');
+        const btn = document.getElementById('nBtn');
+        if(cur >= quiz.length) {
+            txt.innerText = "¡Excelente trabajo! 🌟";
+            div.innerHTML = "<p>Ya dominas el Presente Perfecto Continuo.</p>";
+            res.innerText = ""; btn.style.display = 'none'; return;
+        }
+        txt.innerText = `${cur+1}. ${quiz[cur].q}`;
+        div.innerHTML = ""; res.innerText = ""; btn.style.display = 'none';
+        quiz[cur].o.forEach((o, i) => {
+            const d = document.createElement('div');
+            d.className = 'quiz-option'; d.innerText = o;
+            d.onclick = () => {
+                if(i === quiz[cur].c) { d.style.background = "#22c55e"; res.innerText = "¡Correcto! ✨"; }
+                else { d.style.background = "#ef4444"; res.innerText = "Error. Recuerda que 'been' es fijo y usamos '-ing'."; }
+                Array.from(div.children).forEach(c => c.style.pointerEvents = 'none');
+                cur++; btn.style.display = 'block';
+            };
+            div.appendChild(d);
+        });
+    }
+    loadQ();
+</script>
+</body>
+</html>
+</template>
+
+<template id="ppAppendDoc">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Past Perfect - LuisThree Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981; --secondary: #059669; --bg: #0f172a;
+            --card-bg: #1e293b; --text: #f8fafc; --accent: #34d399;
+            --success: #22c55e; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.8; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: 3px solid var(--primary); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: thin; }
+        .tab-btn { background: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
+        .tab-btn.active { background: var(--primary); border-color: var(--accent); box-shadow: 0 0 15px rgba(16, 185, 129, 0.6); }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h3 { color: var(--accent); margin: 25px 0 10px 0; font-size: 1.3rem; }
+
+        .example-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .example-item { background: #0b0f1a; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--primary); font-family: 'Courier New', monospace; font-size: 1rem; color: #d1fae5; }
+        .trans { display: block; font-family: 'Poppins', sans-serif; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; font-style: italic; }
+
+        .note { background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--primary); padding: 15px; margin: 20px 0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        th { background: var(--secondary); }
+
+        .quiz-option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .quiz-option:hover { background: rgba(16, 185, 129, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mastering Past Perfect</h1>
+        <p>Tutorial de Pasado Perfecto para Hispanohablantes</p>
+    </header>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/e2Fdf8Vqz3I" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'estructura')">1. Estructura</button>
+        <button class="tab-btn" onclick="openTab(event, 'respuestas')">2. Respuestas</button>
+        <button class="tab-btn" onclick="openTab(event, 'uso')">3. El Uso (Pasado del Pasado)</button>
+        <button class="tab-btn" onclick="openTab(event, 'adverbios')">4. Adverbios Clave</button>
+        <button class="tab-btn" onclick="openTab(event, 'ortografia')">5. Contracciones</button>
+        <button class="tab-btn" onclick="openTab(event, 'ejemplos')">6. Práctica Final</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">🔥 Examen</button>
+    </nav>
+
+    <section id="estructura" class="content-section active">
+        <div class="card">
+            <h2>Estructura del Past Perfect</h2>
+            <p>Este tiempo se traduce como el <b>Pluscuamperfecto</b> (había ido, había comido). Es muy sencillo porque el auxiliar <b>had</b> es el mismo para todos los sujetos.</p>
+            <ul>
+                <li><b>Afirmativa:</b> Sujeto + <b>Had</b> + Participio (-ed o 3ª columna).</li>
+                <li><b>Negativa:</b> Sujeto + <b>Hadn't</b> (had not) + Participio.</li>
+                <li><b>Interrogativa:</b> <b>Had</b> + Sujeto + Participio?</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Estructura:</h3>
+                <div class="example-item">1. They <b>had gone</b> home.<span class="trans">(Ellos se habían ido a casa - Irregular: Go-Went-Gone)</span></div>
+                <div class="example-item">2. She <b>had studied</b> a lot.<span class="trans">(Ella había estudiado mucho - Regular: Study -> Studied)</span></div>
+                <div class="example-item">3. He <b>hadn't played</b> tennis.<span class="trans">(Él no había jugado al tenis - Negativa)</span></div>
+                <div class="example-item">4. <b>Had</b> they <b>gone</b> home?<span class="trans">(¿Se habían ido ellos a casa? - Interrogativa)</span></div>
+                <div class="example-item">5. <b>What had</b> she <b>done</b>?<span class="trans">(¿Qué había hecho ella? - Pregunta WH)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="respuestas" class="content-section">
+        <div class="card">
+            <h2>Short Answers (Respuestas Cortas)</h2>
+            <p>Al igual que en otros tiempos, respondemos usando el auxiliar correspondiente, en este caso <b>had</b> o <b>hadn't</b>.</p>
+            <div class="example-list">
+                <h3>Ejemplos de Respuestas:</h3>
+                <div class="example-item">1. Had they gone home? - <b>Yes, they had.</b><span class="trans">(¿Se habían ido? - Sí)</span></div>
+                <div class="example-item">2. Had they gone? - <b>No, they hadn't.</b><span class="trans">(¿Se habían ido? - No)</span></div>
+                <div class="example-item">3. Had she studied? - <b>Yes, she had.</b><span class="trans">(¿Había estudiado? - Sí)</span></div>
+                <div class="example-item">4. Had he played? - <b>No, he hadn't.</b><span class="trans">(¿Había jugado? - No)</span></div>
+                <div class="example-item">5. Had you finished? - <b>Yes, I had.</b><span class="trans">(¿Habías terminado? - Sí)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="uso" class="content-section">
+        <div class="card">
+            <h2>El Pasado del Pasado</h2>
+            <p>El Past Perfect se usa para describir una acción que ocurrió <b>antes</b> de otra acción también en el pasado. Suele ir conectado a una frase en <b>Past Simple</b>.</p>
+            <div class="note">💡 <b>Concepto clave:</b> Si hay dos acciones en el pasado, la que ocurrió primero va en <b>Past Perfect</b> y la que ocurrió después en <b>Past Simple</b>.</div>
+            <div class="example-list">
+                <h3>Ejemplos de Uso:</h3>
+                <div class="example-item">1. They <b>had gone</b> home when we arrived.<span class="trans">(Ellos ya se habían ido cuando nosotros llegamos)</span></div>
+                <div class="example-item">2. When we arrived, they <b>had gone</b> home.<span class="trans">(Cuando llegamos, ellos se habían ido - Mismo sentido, distinto orden)</span></div>
+                <div class="example-item">3. She <b>had studied</b> before she took the exam.<span class="trans">(Ella había estudiado antes de hacer el examen)</span></div>
+                <div class="example-item">4. The film <b>had finished</b> when I got home.<span class="trans">(La película había terminado cuando llegué a casa)</span></div>
+                <div class="example-item">5. I <b>had seen</b> him before you asked.<span class="trans">(Yo le había visto antes de que preguntaras)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="adverbios" class="content-section">
+        <div class="card">
+            <h2>Adverbios y Expresiones Temporales</h2>
+            <p>Estas palabras ayudan a conectar las dos acciones pasadas:</p>
+            <table>
+                <tr><th>Adverbio</th><th>Uso/Significado</th></tr>
+                <tr><td>When</td><td>Cuando</td></tr>
+                <tr><td>By the time</td><td>Para cuando... / En el momento en que... (Sinónimo de When)</td></tr>
+                <tr><td>Before + -ing</td><td>Antes de (hacer algo)</td></tr>
+            </table>
+            <div class="example-list">
+                <h3>Ejemplos con Adverbios:</h3>
+                <div class="example-item">1. <b>By the time</b> I arrived, everyone <b>had left</b>.<span class="trans">(Para cuando llegué, todos se habían ido)</span></div>
+                <div class="example-item">2. <b>Before playing</b> football, we <b>had trained</b> a lot.<span class="trans">(Antes de jugar al fútbol, habíamos entrenado mucho)</span></div>
+                <div class="example-item">3. <b>When</b> Mary arrived, the concert <b>had finished</b>.<span class="trans">(Cuando Mary llegó, el concierto había terminado)</span></div>
+                <div class="example-item">4. <b>Before passing</b> the exam, she <b>had studied</b> hard.<span class="trans">(Antes de aprobar el examen, ella había estudiado duro)</span></div>
+                <div class="example-item">5. Where <b>had she been</b> when you asked her?<span class="trans">(¿Dónde había estado ella cuando le preguntaste?)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ortografia" class="content-section">
+        <div class="card">
+            <h2>Contracciones (Sujeto + 'd)</h2>
+            <p>En inglés hablado, el auxiliar <b>had</b> se contrae con el sujeto usando <b>'d</b>.</p>
+            <div class="note">⚠️ <b>Cuidado:</b> El apóstrofe <b>'d</b> también puede significar <i>would</i>. ¿Cómo distinguirlos? Si después hay un <b>participio</b>, es <b>Had</b>.</div>
+            <div class="example-list">
+                <h3>Ejemplos de Contracciones:</h3>
+                <div class="example-item">1. <b>They'd</b> gone home.<span class="trans">(Ellos se habían ido a casa)</span></div>
+                <div class="example-item">2. <b>He'd</b> played tennis.<span class="trans">(Él había jugado al tenis)</span></div>
+                <div class="example-item">3. <b>She'd</b> studied a lot.<span class="trans">(Ella había estudiado mucho)</span></div>
+                <div class="example-item">4. <b>I'd</b> seen the movie before.<span class="trans">(Yo había visto la película antes)</span></div>
+                <div class="example-item">5. <b>We'd</b> finished the work.<span class="trans">(Habíamos terminado el trabajo)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejemplos" class="content-section">
+        <div class="card">
+            <h2>Resumen de Práctica</h2>
+            <p>Repaso de las frases clave del tutorial de LuisThree:</p>
+            <div class="example-list">
+                <div class="example-item">1. Everybody <b>had left</b> by the time I got to the park.<span class="trans">(Todo el mundo se había ido para cuando llegué al parque)</span></div>
+                <div class="example-item">2. She <b>had studied</b> hard before passing the exam.<span class="trans">(Ella había estudiado mucho antes de aprobar el examen)</span></div>
+                <div class="example-item">3. <b>Had</b> they <b>gone</b> home when we arrived?<span class="trans">(¿Se habían ido ellos a casa cuando llegamos?)</span></div>
+                <div class="example-item">4. Where <b>had he gone</b>?<span class="trans">(¿A dónde había ido él?)</span></div>
+                <div class="example-item">5. We <b>had trained</b> a lot before the match.<span class="trans">(Habíamos entrenado mucho antes del partido)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="card">
+            <h2 id="qText">Examen de Pasado Perfecto</h2>
+            <div id="options"></div>
+            <p id="res" style="margin-top:15px; font-weight:bold;"></p>
+            <button id="nBtn" class="tab-btn" style="display:none; margin-top:15px;" onclick="loadQ()">Siguiente</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openTab(evt, name) {
+        let i, content, btn;
+        content = document.getElementsByClassName("content-section");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        btn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
+        document.getElementById(name).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo({top: 450, behavior: 'smooth'});
+    }
+
+    const quiz = [
+        { q: "¿Cuál es el auxiliar del Past Perfect para 'She'?", o: ["Has", "Have", "Had"], c: 2 },
+        { q: "¿Qué significa 'By the time'?", o: ["Hace tiempo", "Para cuando / En el momento en que", "Antes de"], c: 1 },
+        { q: "Si ves 'I'd gone', ¿qué significa ese 'd?", o: ["Would", "Had", "Did"], c: 1 },
+        { q: "¿Qué acción va en Past Perfect?", o: ["La que ocurrió primero en el pasado", "La que ocurrió después", "La que ocurre ahora"], c: 0 },
+        { q: "Pasado de 'Go' en participio (3ª columna):", o: ["Went", "Goed", "Gone"], c: 2 }
+    ];
+
+    let cur = 0;
+    function loadQ() {
+        const div = document.getElementById('options');
+        const txt = document.getElementById('qText');
+        const res = document.getElementById('res');
+        const btn = document.getElementById('nBtn');
+        if(cur >= quiz.length) {
+            txt.innerText = "¡Enhorabuena! 🏆";
+            div.innerHTML = "<p>Has dominado el Pasado Perfecto (Past Perfect).</p>";
+            res.innerText = ""; btn.style.display = 'none'; return;
+        }
+        txt.innerText = `${cur+1}. ${quiz[cur].q}`;
+        div.innerHTML = ""; res.innerText = ""; btn.style.display = 'none';
+        quiz[cur].o.forEach((o, i) => {
+            const d = document.createElement('div');
+            d.className = 'quiz-option'; d.innerText = o;
+            d.onclick = () => {
+                if(i === quiz[cur].c) { d.style.background = "#22c55e"; res.innerText = "¡Correcto! ✨"; }
+                else { d.style.background = "#ef4444"; res.innerText = "Incorrecto. Repasa el uso del 'pasado del pasado'."; }
+                Array.from(div.children).forEach(c => c.style.pointerEvents = 'none');
+                cur++; btn.style.display = 'block';
+            };
+            div.appendChild(d);
+        });
+    }
+    loadQ();
+</script>
+</body>
+</html>
+</template>
+
+<template id="ppcAppendDoc">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Past Perfect Continuous - LuisThree Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f59e0b; --secondary: #d97706; --bg: #0f172a;
+            --card-bg: #1e293b; --text: #f8fafc; --accent: #fbbf24;
+            --success: #22c55e; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.8; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: 3px solid var(--primary); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: thin; }
+        .tab-btn { background: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
+        .tab-btn.active { background: var(--primary); border-color: var(--accent); box-shadow: 0 0 15px rgba(245, 158, 11, 0.6); }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h3 { color: var(--accent); margin: 25px 0 10px 0; font-size: 1.3rem; }
+
+        .example-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .example-item { background: #0b0f1a; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--primary); font-family: 'Courier New', monospace; font-size: 1rem; color: #fef3c7; }
+        .trans { display: block; font-family: 'Poppins', sans-serif; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; font-style: italic; }
+
+        .note { background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--primary); padding: 15px; margin: 20px 0; border-radius: 8px; }
+
+        .quiz-option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .quiz-option:hover { background: rgba(245, 158, 11, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mastering Past Perfect Continuous</h1>
+        <p>Tutorial de Pasado Perfecto Continuo - LuisThree Edition</p>
+    </header>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/ScGthI9955w" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'estructura')">1. Estructura</button>
+        <button class="tab-btn" onclick="openTab(event, 'uso')">2. El Uso</button>
+        <button class="tab-btn" onclick="openTab(event, 'adverbios')">3. Adverbios Clave</button>
+        <button class="tab-btn" onclick="openTab(event, 'ejemplos')">4. Práctica de Oraciones</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">🔥 Examen</button>
+    </nav>
+
+    <section id="estructura" class="content-section active">
+        <div class="card">
+            <h2>Estructura del Pasado Perfecto Continuo</h2>
+            <p>Este tiempo se traduce como "había estado haciendo algo". Lo bueno es que el auxiliar <b>Had Been</b> es fijo para todos los sujetos.</p>
+            <ul>
+                <li><b>Afirmativa:</b> Sujeto + <b>had been</b> + Verbo en <b>-ing</b>.</li>
+                <li><b>Negativa:</b> Sujeto + <b>hadn't been</b> (had not been) + Verbo en <b>-ing</b>.</li>
+                <li><b>Interrogativa:</b> <b>Had</b> + Sujeto + <b>been</b> + Verbo en <b>-ing</b>?</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Estructura:</h3>
+                <div class="example-item">1. She <b>had been dancing</b> for two hours.<span class="trans">(Ella había estado bailando durante dos horas)</span></div>
+                <div class="example-item">2. I <b>hadn't been waiting</b> long.<span class="trans">(No había estado esperando mucho tiempo)</span></div>
+                <div class="example-item">3. <b>Had</b> she <b>been dancing</b>?<span class="trans">(¿Había estado ella bailando?)</span></div>
+                <div class="example-item">4. They <b>had been playing</b> very well.<span class="trans">(Ellos habían estado jugando muy bien)</span></div>
+                <div class="example-item">5. <b>I'd been waiting</b> for you.<span class="trans">(Yo había estado esperándote - Contracción)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="uso" class="content-section">
+        <div class="card">
+            <h2>¿Cuándo se usa?</h2>
+            <p>Se utiliza para un <b>periodo de tiempo</b> que ocurrió en el pasado y terminó en el pasado antes de otra acción (esta otra acción suele ir en <b>Past Simple</b>).</p>
+            <div class="note">💡 <b>LuisThree dice:</b> Úsalo para dar énfasis en la <b>duración</b>, el <b>esfuerzo</b> o la <b>repetición</b> de una acción.</div>
+            <div class="example-list">
+                <h3>Ejemplos de Uso y Énfasis:</h3>
+                <div class="example-item">1. She had been dancing <b>when I talked to her</b>.<span class="trans">(Había estado bailando cuando hablé con ella)</span></div>
+                <div class="example-item">2. I <b>had been calling</b> you once and again.<span class="trans">(Había estado llamándote una y otra vez - Repetición)</span></div>
+                <div class="example-item">3. I <b>had been knocking</b> at the door for ten minutes.<span class="trans">(Había estado llamando a la puerta 10 min - Esfuerzo)</span></div>
+                <div class="example-item">4. The players <b>had been playing</b> well before it started to rain.<span class="trans">(Los jugadores habían estado jugando bien antes de que empezara a llover)</span></div>
+                <div class="example-item">5. I <b>had been wanting</b> this present for years.<span class="trans">(Había estado deseando este regalo durante años)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="adverbios" class="content-section">
+        <div class="card">
+            <h2>Adverbios y Nexos</h2>
+            <p>Este tiempo verbal suele ir acompañado de conectores que marcan el límite de la acción:</p>
+            <ul>
+                <li><b>Before:</b> Antes de (puede ir seguido de verbo con -ing o una oración).</li>
+                <li><b>For / Since:</b> Durante / Desde.</li>
+                <li><b>When:</b> Cuando.</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos con Conectores:</h3>
+                <div class="example-item">1. <b>Before meeting</b> you, I had been shopping.<span class="trans">(Antes de quedar contigo, había estado de compras)</span></div>
+                <div class="example-item">2. <b>Before I met</b> you, I had been shopping.<span class="trans">(Antes de que quedara contigo, había estado de compras)</span></div>
+                <div class="example-item">3. I had been wanting this present <b>since</b> I was a child.<span class="trans">(Había estado deseando este regalo desde que era niño)</span></div>
+                <div class="example-item">4. Had you been watching videos <b>before</b> finding this one?<span class="trans">(¿Habías estado viendo vídeos antes de encontrar este?)</span></div>
+                <div class="example-item">5. I had been waiting <b>for</b> many hours.<span class="trans">(Había estado esperando durante muchas horas)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejemplos" class="content-section">
+        <div class="card">
+            <h2>Resumen de Práctica</h2>
+            <p>Oraciones finales para repasar los conceptos clave del tutorial:</p>
+            <div class="example-list">
+                <div class="example-item">1. She <b>had been waiting</b> at the station.<span class="trans">(Ella había estado esperando en la estación)</span></div>
+                <div class="example-item">2. <b>Had she been</b> dancing for two hours?<span class="trans">(¿Había estado ella bailando durante dos horas?)</span></div>
+                <div class="example-item">3. <b>I'd been knocking</b> for ten minutes.<span class="trans">(Había estado llamando a la puerta por diez minutos)</span></div>
+                <div class="example-item">4. They <b>hadn't been</b> playing well.<span class="trans">(Ellos no habían estado jugando bien)</span></div>
+                <div class="example-item">5. I <b>had been calling</b> you once and again.<span class="trans">(Te había estado llamando una y otra vez)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="card">
+            <h2 id="qText">Examen de Pasado Perfecto Continuo</h2>
+            <div id="options"></div>
+            <p id="res" style="margin-top:15px; font-weight:bold;"></p>
+            <button id="nBtn" class="tab-btn" style="display:none; margin-top:15px;" onclick="loadQ()">Siguiente</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openTab(evt, name) {
+        let i, content, btn;
+        content = document.getElementsByClassName("content-section");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        btn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
+        document.getElementById(name).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo({top: 450, behavior: 'smooth'});
+    }
+
+    const quiz = [
+        { q: "¿Qué auxiliar se usa para TODOS los sujetos?", o: ["Have been", "Had been", "Was being"], c: 1 },
+        { q: "¿En qué termina el verbo principal?", o: ["En -ed", "En infinitivo", "En -ing"], c: 2 },
+        { q: "¿Para qué sirve el Past Perfect Continuous?", o: ["Para hablar del presente", "Para enfatizar la duración de una acción pasada", "Para planes futuros"], c: 1 },
+        { q: "¿Cuál es la contracción de 'I had been'?", o: ["I've been", "I'd been", "I was been"], c: 1 },
+        { q: "¿Qué tiempo suele interrumpir al Past Perfect Continuous?", o: ["Present Simple", "Past Simple", "Future Simple"], c: 1 }
+    ];
+
+    let cur = 0;
+    function loadQ() {
+        const div = document.getElementById('options');
+        const txt = document.getElementById('qText');
+        const res = document.getElementById('res');
+        const btn = document.getElementById('nBtn');
+        if(cur >= quiz.length) {
+            txt.innerText = "¡Excelente trabajo! 🎯";
+            div.innerHTML = "<p>Has dominado el Pasado Perfecto Continuo con el estilo de LuisThree.</p>";
+            res.innerText = ""; btn.style.display = 'none'; return;
+        }
+        txt.innerText = `${cur+1}. ${quiz[cur].q}`;
+        div.innerHTML = ""; res.innerText = ""; btn.style.display = 'none';
+        quiz[cur].o.forEach((o, i) => {
+            const d = document.createElement('div');
+            d.className = 'quiz-option'; d.innerText = o;
+            d.onclick = () => {
+                if(i === quiz[cur].c) { d.style.background = "#22c55e"; res.innerText = "¡Correcto! ✨"; }
+                else { d.style.background = "#ef4444"; res.innerText = "Error. Recuerda: Had been + ING."; }
+                Array.from(div.children).forEach(c => c.style.pointerEvents = 'none');
+                cur++; btn.style.display = 'block';
+            };
+            div.appendChild(d);
+        });
+    }
+    loadQ();
+</script>
+</body>
+</html>
+</template>
+
+<template id="fpAppendDoc">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Future Perfect - LuisThree Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f59e0b; --secondary: #d97706; --bg: #0f172a;
+            --card-bg: #1e293b; --text: #f8fafc; --accent: #fbbf24;
+            --success: #22c55e; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.8; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: 3px solid var(--primary); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: thin; }
+        .tab-btn { background: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
+        .tab-btn.active { background: var(--primary); border-color: var(--accent); box-shadow: 0 0 15px rgba(245, 158, 11, 0.6); }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h3 { color: var(--primary); margin: 25px 0 10px 0; font-size: 1.3rem; }
+
+        .example-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .example-item { background: #0b0f1a; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--primary); font-family: 'Courier New', monospace; font-size: 1rem; color: #fef3c7; }
+        .trans { display: block; font-family: 'Poppins', sans-serif; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; font-style: italic; }
+
+        .note { background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); padding: 15px; margin: 20px 0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        th { background: var(--secondary); }
+
+        .quiz-option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .quiz-option:hover { background: rgba(245, 158, 11, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mastering Future Perfect</h1>
+        <p>Tutorial de Futuro Perfecto para Hispanohablantes</p>
+    </header>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/A5binNWjSso" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'estructura')">1. Estructura</button>
+        <button class="tab-btn" onclick="openTab(event, 'uso')">2. El Uso</button>
+        <button class="tab-btn" onclick="openTab(event, 'adverbios')">3. Expresiones de Tiempo</button>
+        <button class="tab-btn" onclick="openTab(event, 'ejemplos')">4. Práctica de Oraciones</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">🔥 Examen</button>
+    </nav>
+
+    <section id="estructura" class="content-section active">
+        <div class="card">
+            <h2>Estructura Gramatical</h2>
+            <p>El <b>Future Perfect</b> se utiliza para decir "habré hecho algo". Lo bueno es que el auxiliar <b>Will have</b> no cambia según el sujeto.</p>
+            <ul>
+                <li><b>Afirmativa:</b> Sujeto + <b>Will have</b> + Participio (3ª columna).</li>
+                <li><b>Negativa:</b> Sujeto + <b>Won't have</b> + Participio.</li>
+                <li><b>Interrogativa:</b> <b>Will</b> + Sujeto + <b>have</b> + Participio?</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Estructura:</h3>
+                <div class="example-item">1. He <b>will have come back</b>.<span class="trans">(Él habrá vuelto)</span></div>
+                <div class="example-item">2. I <b>will have finished</b> my homework.<span class="trans">(Yo habré terminado mis deberes)</span></div>
+                <div class="example-item">3. He <b>won't have come back</b>.<span class="trans">(Él no habrá vuelto - Negativa)</span></div>
+                <div class="example-item">4. <b>Will</b> he <b>have come back</b>?<span class="trans">(¿Habrá vuelto él? - Interrogativa)</span></div>
+                <div class="example-item">5. We <b>won't have eaten</b> dinner.<span class="trans">(No habremos cenado)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="uso" class="content-section">
+        <div class="card">
+            <h2>¿Cuándo se usa?</h2>
+            <p>Se utiliza para referirse a una <b>acción que estará finalizada</b> en un momento concreto del futuro. Es como mirar hacia atrás desde un punto futuro.</p>
+            <div class="note">💡 <b>Enfoque LuisThree:</b> Siempre imagina un punto futuro (como el fin de mes) y una acción que ya se habrá completado para entonces.</div>
+            <div class="example-list">
+                <h3>Ejemplos de Uso:</h3>
+                <div class="example-item">1. I <b>will have graduated</b> by 2025.<span class="trans">(Me habré graduado para el 2025)</span></div>
+                <div class="example-item">2. She <b>will have written</b> the book.<span class="trans">(Ella habrá escrito el libro)</span></div>
+                <div class="example-item">3. They <b>will have arrived</b> at the station.<span class="trans">(Ellos habrán llegado a la estación)</span></div>
+                <div class="example-item">4. By tomorrow, I <b>will have fixed</b> it.<span class="trans">(Para mañana, lo habré arreglado)</span></div>
+                <div class="example-item">5. We <b>will have cleaned</b> the house.<span class="trans">(Habremos limpiado la casa)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="adverbios" class="content-section">
+        <div class="card">
+            <h2>Expresiones Temporales Clave</h2>
+            <p>Para que el Future Perfect tenga sentido, solemos concretar el momento del futuro con estas expresiones:</p>
+            <table>
+                <tr><th>Expresión</th><th>Significado</th></tr>
+                <tr><td>By the end of...</td><td>Hacia el final de...</td></tr>
+                <tr><td>By this time next week</td><td>Más o menos por esta época de la semana que viene</td></tr>
+                <tr><td>In (two months/days)</td><td>Dentro de (dos meses/días)</td></tr>
+                <tr><td>By (April/Monday)</td><td>Para (Abril/Lunes)</td></tr>
+            </table>
+            <div class="example-list">
+                <h3>Ejemplos con Expresiones:</h3>
+                <div class="example-item">1. <b>By the end of</b> April, he will have come back.<span class="trans">(Hacia el final de abril, él habrá vuelto)</span></div>
+                <div class="example-item">2. <b>By this time</b> next week, I will have finished school.<span class="trans">(Para esta hora la próxima semana, habré terminado el colegio)</span></div>
+                <div class="example-item">3. <b>In</b> two months, the holidays will have finished.<span class="trans">(Dentro de dos meses, las vacaciones se habrán acabado)</span></div>
+                <div class="example-item">4. <b>By</b> tomorrow morning, she will have left.<span class="trans">(Para mañana por la mañana, ella se habrá ido)</span></div>
+                <div class="example-item">5. <b>By the end of</b> the year, they will have sold the house.<span class="trans">(Para finales de año, ellos habrán vendido la casa)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejemplos" class="content-section">
+        <div class="card">
+            <h2>Práctica de Consolidación</h2>
+            <p>Repaso de las oraciones finales del tutorial:</p>
+            <div class="example-list">
+                <div class="example-item">1. By this time next month, we <b>will have moved</b> to Paris.<span class="trans">(Para esta fecha el mes que viene, nos habremos mudado a París)</span></div>
+                <div class="example-item">2. I <b>will have read</b> the whole book by Sunday.<span class="trans">(Habré leído todo el libro para el domingo)</span></div>
+                <div class="example-item">3. <b>Won't</b> you <b>have finished</b> by 5 o'clock?<span class="trans">(¿No habrás terminado para las 5?)</span></div>
+                <div class="example-item">4. In three days, they <b>will have fixed</b> the car.<span class="trans">(Dentro de tres días, habrán arreglado el coche)</span></div>
+                <div class="example-item">5. By next year, I <b>will have bought</b> a new house.<span class="trans">(Para el año que viene, habré comprado una casa nueva)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="card">
+            <h2 id="qText">Examen de Futuro Perfecto</h2>
+            <div id="options"></div>
+            <p id="res" style="margin-top:15px; font-weight:bold;"></p>
+            <button id="nBtn" class="tab-btn" style="display:none; margin-top:15px;" onclick="loadQ()">Siguiente</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openTab(evt, name) {
+        let i, content, btn;
+        content = document.getElementsByClassName("content-section");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        btn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
+        document.getElementById(name).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo({top: 450, behavior: 'smooth'});
+    }
+
+    const quiz = [
+        { q: "¿Cuál es la estructura afirmativa del Future Perfect?", o: ["Will + Verbo", "Will have + Participio", "Have + Participio"], c: 1 },
+        { q: "¿Qué significa 'By the end of'?", o: ["Al principio de", "Hacia el final de", "Durante"], c: 1 },
+        { q: "¿Cómo se dice 'Yo habré terminado'?", o: ["I will finish", "I will have finished", "I have finished"], c: 1 },
+        { q: "¿Cuál es la forma negativa de 'Will'?", o: ["Willing", "Don't will", "Won't"], c: 2 },
+        { q: "¿Cuándo se usa el Future Perfect?", o: ["Acciones ahora", "Acciones que estarán finalizadas en un punto futuro", "Acciones pasadas"], c: 1 }
+    ];
+
+    let cur = 0;
+    function loadQ() {
+        const div = document.getElementById('options');
+        const txt = document.getElementById('qText');
+        const res = document.getElementById('res');
+        const btn = document.getElementById('nBtn');
+        if(cur >= quiz.length) {
+            txt.innerText = "¡Excelente! 🎓";
+            div.innerHTML = "<p>Has completado el tutorial del Futuro Perfecto.</p>";
+            res.innerText = ""; btn.style.display = 'none'; return;
+        }
+        txt.innerText = `${cur+1}. ${quiz[cur].q}`;
+        div.innerHTML = ""; res.innerText = ""; btn.style.display = 'none';
+        quiz[cur].o.forEach((o, i) => {
+            const d = document.createElement('div');
+            d.className = 'quiz-option'; d.innerText = o;
+            d.onclick = () => {
+                if(i === quiz[cur].c) { d.style.background = "#22c55e"; res.innerText = "¡Correcto! ✨"; }
+                else { d.style.background = "#ef4444"; res.innerText = "Error. Repasa la estructura 'Will have + Participio'."; }
+                Array.from(div.children).forEach(c => c.style.pointerEvents = 'none');
+                cur++; btn.style.display = 'block';
+            };
+            div.appendChild(d);
+        });
+    }
+    loadQ();
+</script>
+</body>
+</html>
+</template>
+
+<!-- Template embebido para Future Perfect Continuous (se carga en iframe dentro del modal) -->
+<template id="fpcAppendDoc">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Future Perfect Continuous - LuisThree Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6; --secondary: #6d28d9; --bg: #0f172a;
+            --card-bg: #1e293b; --text: #f8fafc; --accent: #ddd6fe;
+            --success: #22c55e; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.8; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: 3px solid var(--primary); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: thin; }
+        .tab-btn { background: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
+        .tab-btn.active { background: var(--primary); border-color: var(--accent); box-shadow: 0 0 15px rgba(139, 92, 246, 0.6); }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h3 { color: var(--accent); margin: 25px 0 10px 0; font-size: 1.3rem; }
+
+        .example-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .example-item { background: #0b0f1a; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--primary); font-family: 'Courier New', monospace; font-size: 1rem; color: #ede9fe; }
+        .trans { display: block; font-family: 'Poppins', sans-serif; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; font-style: italic; }
+
+        .note { background: rgba(139, 92, 246, 0.1); border-left: 4px solid var(--primary); padding: 15px; margin: 20px 0; border-radius: 8px; }
+
+        .quiz-option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .quiz-option:hover { background: rgba(139, 92, 246, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mastering Future Perfect Continuous</h1>
+        <p>Tutorial de Futuro Perfecto Continuo - LuisThree Edition</p>
+    </header>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/pK9UPDqY6gc" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'estructura')">1. Estructura</button>
+        <button class="tab-btn" onclick="openTab(event, 'usos')">2. Los 2 Usos</button>
+        <button class="tab-btn" onclick="openTab(event, 'nexos')">3. Nexos Clave</button>
+        <button class="tab-btn" onclick="openTab(event, 'ejemplos')">4. Práctica de Oraciones</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">🔥 Examen</button>
+    </nav>
+
+    <section id="estructura" class="content-section active">
+        <div class="card">
+            <h2>Estructura Gramatical</h2>
+            <p>Este tiempo se traduce como "habré estado haciendo algo". El bloque central es <b>Will Have Been</b> y no cambia nunca según el sujeto.</p>
+            <ul>
+                <li><b>Afirmativa:</b> Sujeto + <b>will have been</b> + Verbo en <b>-ing</b>.</li>
+                <li><b>Negativa:</b> Sujeto + <b>won't have been</b> (will not) + Verbo en <b>-ing</b>.</li>
+                <li><b>Interrogativa:</b> <b>Will</b> + Sujeto + <b>have been</b> + Verbo en <b>-ing</b>?</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Estructura:</h3>
+                <div class="example-item">1. You <b>will have been waiting</b> for two hours.<span class="trans">(Tú habrás estado esperando durante dos horas) [00:01:43]</span></div>
+                <div class="example-item">2. He <b>will have been working</b> for three years.<span class="trans">(Él habrá estado trabajando durante tres años) [00:02:27]</span></div>
+                <div class="example-item">3. You <b>won't have been waiting</b> long.<span class="trans">(Tú no habrás estado esperando mucho tiempo) [00:04:18]</span></div>
+                <div class="example-item">4. <b>Will you have been</b> waiting for two hours?<span class="trans">(¿Habrás estado esperando por dos horas?) [00:05:36]</span></div>
+                <div class="example-item">5. She <b>will have been living</b> here for 10 years.<span class="trans">(Ella habrá estado viviendo aquí durante 10 años) [00:13:52]</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="usos" class="content-section">
+        <div class="card">
+            <h2>¿Cuándo se utiliza?</h2>
+            <ol>
+                <li><b>Duración antes de algo en el futuro:</b> Expresar cuánto tiempo llevará una acción cuando ocurra otra cosa.</li>
+                <li><b>Causa de algo futuro:</b> Explicar por qué sucederá algo basándose en una acción continua previa.</li>
+            </ol>
+            <div class="note">⚠️ <b>Importante:</b> Casi nunca va solo. Suele conectarse con una frase en <b>Present Simple</b> (aunque en español pensemos en subjuntivo).</div>
+            <div class="example-list">
+                <h3>Ejemplos de Uso:</h3>
+                <div class="example-item">1. I'll have been teaching for 35 years <b>by the time I retire</b>.<span class="trans">(Habré enseñado por 35 años para cuando me jubile) [00:06:41]</span></div>
+                <div class="example-item">2. You'll have a high level <b>because you'll have been watching</b> my videos.<span class="trans">(Tendrás un nivel alto porque habrás estado viendo mis vídeos) [00:07:38]</span></div>
+                <div class="example-item">3. I'll have been looking for a job for a long time <b>by the time I find one</b>.<span class="trans">(Habré estado buscando trabajo mucho tiempo para cuando encuentre uno) [00:13:27]</span></div>
+                <div class="example-item">4. You will score good marks <b>as you'll have been studying hard</b>.<span class="trans">(Sacarás buenas notas puesto que habrás estado estudiando duro) [00:13:04]</span></div>
+                <div class="example-item">5. He'll have been working 3 years <b>when his contract ends</b>.<span class="trans">(Él habrá estado trabajando 3 años cuando termine su contrato) [00:03:03]</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="nexos" class="content-section">
+        <div class="card">
+            <h2>Adverbios y Conjunciones</h2>
+            <p>LuisThree destaca varias palabras que "llaman" a este tiempo verbal:</p>
+            <ul>
+                <li><b>When / By the time:</b> Cuándo / Para cuando (son sinónimos en este tiempo). [00:09:13]</li>
+                <li><b>Because / As / Since:</b> Porque / Puesto que / Ya que (explican la causa). [00:10:32]</li>
+                <li><b>For:</b> Durante (indica el periodo de tiempo). [00:10:04]</li>
+                <li><b>By:</b> Para/A la altura de (seguido de indicador como un mes). [00:11:45]</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos con Nexos:</h3>
+                <div class="example-item">1. I will have been working for 3 months <b>by June</b>.<span class="trans">(Habré estado trabajando por 3 meses para junio) [00:12:10]</span></div>
+                <div class="example-item">2. <b>How long</b> will you have been watching videos?<span class="trans">(¿Cuánto tiempo habrás estado viendo vídeos?) [00:12:41]</span></div>
+                <div class="example-item">3. ...<b>as</b> you will have been studying hard.<span class="trans">(...ya que habrás estado estudiando duro) [00:13:16]</span></div>
+                <div class="example-item">4. ...<b>by next September</b>.<span class="trans">(...para el próximo septiembre) [00:14:00]</span></div>
+                <div class="example-item">5. ...<b>when</b> I retire.<span class="trans">(...cuando me retire) [00:09:41]</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejemplos" class="content-section">
+        <div class="card">
+            <h2>Práctica Combinada</h2>
+            <p>Repaso de oraciones complejas del tutorial:</p>
+            <div class="example-list">
+                <div class="example-item">1. <b>How long will you have been watching</b> videos by the time you have a good command of English?<span class="trans">[00:12:33]</span></div>
+                <div class="example-item">2. You <b>will have a high level</b> soon <b>because you will have been watching</b> my videos.<span class="trans">[00:10:52]</span></div>
+                <div class="example-item">3. She <b>will have been living</b> in England for 10 years by next September.<span class="trans">[00:13:42]</span></div>
+                <div class="example-item">4. I <b>will have been looking</b> for a job for a long time.<span class="trans">[00:13:20]</span></div>
+                <div class="example-item">5. You <b>won't have been waiting</b> for two hours when I arrive.<span class="trans">[00:04:07]</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="card">
+            <h2 id="qText">Examen de Futuro Perfecto Continuo</h2>
+            <div id="options"></div>
+            <p id="res" style="margin-top:15px; font-weight:bold;"></p>
+            <button id="nBtn" class="tab-btn" style="display:none; margin-top:15px;" onclick="loadQ()">Siguiente</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openTab(evt, name) {
+        let i, content, btn;
+        content = document.getElementsByClassName("content-section");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        btn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
+        document.getElementById(name).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo({top: 450, behavior: 'smooth'});
+    }
+
+    const quiz = [
+        { q: "¿Cuál es el bloque auxiliar FIJO?", o: ["Will have been", "Will been have", "Will has been"], c: 0 },
+        { q: "¿Para qué sirve el segundo uso mencionado?", o: ["Para una acción puntual", "Para expresar una causa futura", "Para hablar del pasado"], c: 1 },
+        { q: "En 'By the time I retire', el verbo 'retire' está en...", o: ["Futuro", "Presente Simple", "Pasado"], c: 1 },
+        { q: "¿Qué nexo es sinónimo de 'Because'?", o: ["When", "As", "By the time"], c: 1 },
+        { q: "¿Cómo se hace la negativa?", o: ["Will have not been", "Won't have been", "Will have been not"], c: 1 }
+    ];
+
+    let cur = 0;
+    function loadQ() {
+        const div = document.getElementById('options');
+        const txt = document.getElementById('qText');
+        const res = document.getElementById('res');
+        const btn = document.getElementById('nBtn');
+        if(cur >= quiz.length) {
+            txt.innerText = "¡Nivel Experto! 🎓";
+            div.innerHTML = "<p>Has completado todos los tiempos continuos de LuisThree.</p>";
+            res.innerText = ""; btn.style.display = 'none'; return;
+        }
+        txt.innerText = `${cur+1}. ${quiz[cur].q}`;
+        div.innerHTML = ""; res.innerText = ""; btn.style.display = 'none';
+        quiz[cur].o.forEach((o, i) => {
+            const d = document.createElement('div');
+            d.className = 'quiz-option'; d.innerText = o;
+            d.onclick = () => {
+                if(i === quiz[cur].c) { d.style.background = "#22c55e"; res.innerText = "¡Correcto! ✨"; }
+                else { d.style.background = "#ef4444"; res.innerText = "Error. Revisa la estructura: Will have been + ING."; }
+                Array.from(div.children).forEach(c => c.style.pointerEvents = 'none');
+                cur++; btn.style.display = 'block';
+            };
+            div.appendChild(d);
+        });
+    }
+    loadQ();
+</script>
+</body>
+</html>
+</template>
+
+
+<template id="fcAppendDoc">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Future Continuous - LuisThree Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6; --secondary: #1d4ed8; --bg: #0f172a;
+            --card-bg: #1e293b; --text: #f8fafc; --accent: #60a5fa;
+            --success: #22c55e; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.8; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: 3px solid var(--primary); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: thin; }
+        .tab-btn { background: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
+        .tab-btn.active { background: var(--primary); border-color: var(--accent); box-shadow: 0 0 15px rgba(59, 130, 246, 0.6); }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h3 { color: var(--accent); margin: 25px 0 10px 0; font-size: 1.3rem; }
+
+        .example-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .example-item { background: #0b0f1a; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--primary); font-family: 'Courier New', monospace; font-size: 1rem; color: #dbeafe; }
+        .trans { display: block; font-family: 'Poppins', sans-serif; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; font-style: italic; }
+
+        .note { background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--primary); padding: 15px; margin: 20px 0; border-radius: 8px; }
+
+        .quiz-option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .quiz-option:hover { background: rgba(59, 130, 246, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mastering Future Continuous</h1>
+        <p>Tutorial de Futuro Continuo para Hispanohablantes</p>
+    </header>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/3FY-9iG7SY4" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'estructura')">1. Estructura</button>
+        <button class="tab-btn" onclick="openTab(event, 'uso')">2. El Uso</button>
+        <button class="tab-btn" onclick="openTab(event, 'adverbios')">3. Expresiones Clave</button>
+        <button class="tab-btn" onclick="openTab(event, 'ejemplos')">4. Práctica de Oraciones</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">🔥 Examen</button>
+    </nav>
+
+    <section id="estructura" class="content-section active">
+        <div class="card">
+            <h2>Estructura del Futuro Continuo</h2>
+            <p>Este tiempo se usa para decir "estaré haciendo algo". Es muy sencillo porque el bloque <b>will be</b> es fijo para todos los sujetos.</p>
+            <ul>
+                <li><b>Afirmativa:</b> Sujeto + <b>will be</b> + Verbo terminado en <b>-ing</b>.</li>
+                <li><b>Negativa:</b> Sujeto + <b>won't be</b> (will not be) + Verbo terminado en <b>-ing</b>.</li>
+                <li><b>Interrogativa:</b> <b>Will</b> + Sujeto + <b>be</b> + Verbo terminado en <b>-ing</b>?</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Estructura:</h3>
+                <div class="example-item">1. You <b>will be flying</b> to London.<span class="trans">(Tú estarás volando a Londres)</span></div>
+                <div class="example-item">2. He <b>will be driving</b> a car.<span class="trans">(Él estará conduciendo un coche)</span></div>
+                <div class="example-item">3. You <b>won't be flying</b> to London.<span class="trans">(Tú no estarás volando a Londres - Negativa)</span></div>
+                <div class="example-item">4. <b>Will</b> you <b>be flying</b> to London?<span class="trans">(¿Estarás tú volando a Londres? - Interrogativa)</span></div>
+                <div class="example-item">5. She <b>won't be sleeping</b> at 10 PM.<span class="trans">(Ella no estará durmiendo a las 10 PM)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="uso" class="content-section">
+        <div class="card">
+            <h2>¿Cuándo se usa?</h2>
+            <p>Se utiliza para describir una acción que <b>estará ocurriendo</b> en un momento concreto del futuro. También se usa en combinación con el <b>Present Simple</b>.</p>
+            <div class="note">💡 <b>LuisThree dice:</b> Úsalo cuando quieras enfatizar la duración de una acción en un momento exacto de mañana o de la próxima semana.</div>
+            <div class="example-list">
+                <h3>Ejemplos de Uso:</h3>
+                <div class="example-item">1. <b>At this time tomorrow</b>, I will be teaching English.<span class="trans">(A esta hora mañana, estaré enseñando inglés)</span></div>
+                <div class="example-item">2. <b>When you arrive</b>, I will be waiting for you.<span class="trans">(Cuando llegues -Present Simple-, estaré esperándote)</span></div>
+                <div class="example-item">3. I'll be watching you <b>whatever you do</b>.<span class="trans">(Estaré vigilándote hagas lo que hagas)</span></div>
+                <div class="example-item">4. At 5 PM next Monday, he <b>will be working</b>.<span class="trans">(A las 5 PM el próximo lunes, él estará trabajando)</span></div>
+                <div class="example-item">5. They <b>will be traveling</b> during the holidays.<span class="trans">(Ellos estarán viajando durante las vacaciones)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="adverbios" class="content-section">
+        <div class="card">
+            <h2>Expresiones Temporales Clave</h2>
+            <p>El Futuro Continuo casi siempre va acompañado de expresiones que marcan el momento exacto:</p>
+            <ul>
+                <li><b>At this time tomorrow:</b> A esta hora mañana.</li>
+                <li><b>At this time next week:</b> A esta hora la semana que viene.</li>
+                <li><b>Next (Monday/Month):</b> El próximo (lunes/mes).</li>
+                <li><b>Tomorrow:</b> Mañana.</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos con Adverbios:</h3>
+                <div class="example-item">1. <b>At this time next week</b>, he will be driving to Paris.<span class="trans">(A esta hora la semana que viene, él estará conduciendo a París)</span></div>
+                <div class="example-item">2. <b>Tomorrow morning</b>, they will be playing football.<span class="trans">(Mañana por la mañana, ellos estarán jugando al fútbol)</span></div>
+                <div class="example-item">3. <b>Next Sunday</b>, we will be relaxing at the beach.<span class="trans">(El próximo domingo estaremos relajándonos en la playa)</span></div>
+                <div class="example-item">4. <b>At noon</b>, I'll be eating lunch.<span class="trans">(Al mediodía estaré almorzando)</span></div>
+                <div class="example-item">5. <b>At this time tomorrow</b>, you'll be flying.<span class="trans">(A esta hora mañana, estarás volando)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejemplos" class="content-section">
+        <div class="card">
+            <h2>Resumen de Práctica</h2>
+            <p>Oraciones destacadas del tutorial de LuisThree:</p>
+            <div class="example-list">
+                <div class="example-item">1. At this time tomorrow, I <b>will be teaching</b> English.<span class="trans">(A esta hora mañana estaré dando clases de inglés)</span></div>
+                <div class="example-item">2. When you arrive at the station, I <b>will be waiting</b> for you.<span class="trans">(Cuando llegues a la estación, estaré esperándote)</span></div>
+                <div class="example-item">3. Whatever you do, I <b>will be watching</b> you.<span class="trans">(Hagas lo que hagas, estaré observándote)</span></div>
+                <div class="example-item">4. <b>Will</b> you <b>be flying</b> to London next month?<span class="trans">(¿Estarás volando a Londres el mes que viene?)</span></div>
+                <div class="example-item">5. He <b>won't be driving</b> at this time next week.<span class="trans">(Él no estará conduciendo a esta hora la semana que viene)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="card">
+            <h2 id="qText">Examen de Futuro Continuo</h2>
+            <div id="options"></div>
+            <p id="res" style="margin-top:15px; font-weight:bold;"></p>
+            <button id="nBtn" class="tab-btn" style="display:none; margin-top:15px;" onclick="loadQ()">Siguiente</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openTab(evt, name) {
+        let i, content, btn;
+        content = document.getElementsByClassName("content-section");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        btn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
+        document.getElementById(name).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo({top: 450, behavior: 'smooth'});
+    }
+
+    const quiz = [
+        { q: "¿Cuál es el bloque fijo en este tiempo?", o: ["Will have", "Will be", "Will"], c: 1 },
+        { q: "¿Cómo termina el verbo principal?", o: ["En -ed", "En -ing", "En infinitivo"], c: 1 },
+        { q: "¿Qué significa 'At this time tomorrow'?", o: ["Mañana a cualquier hora", "A esta hora mañana", "Ayer a esta hora"], c: 1 },
+        { q: "¿Cuál es la forma negativa de 'will be'?", o: ["Not will be", "Will be not", "Won't be"], c: 2 },
+        { q: "En la frase 'When you arrive, I will be waiting', ¿en qué tiempo está 'arrive'?", o: ["Past Simple", "Present Simple", "Future"], c: 1 }
+    ];
+
+    let cur = 0;
+    function loadQ() {
+        const div = document.getElementById('options');
+        const txt = document.getElementById('qText');
+        const res = document.getElementById('res');
+        const btn = document.getElementById('nBtn');
+        if(cur >= quiz.length) {
+            txt.innerText = "¡Buen trabajo! 🚀";
+            div.innerHTML = "<p>Has dominado el Futuro Continuo (Future Continuous).</p>";
+            res.innerText = ""; btn.style.display = 'none'; return;
+        }
+        txt.innerText = `${cur+1}. ${quiz[cur].q}`;
+        div.innerHTML = ""; res.innerText = ""; btn.style.display = 'none';
+        quiz[cur].o.forEach((o, i) => {
+            const d = document.createElement('div');
+            d.className = 'quiz-option'; d.innerText = o;
+            d.onclick = () => {
+                if(i === quiz[cur].c) { d.style.background = "#22c55e"; res.innerText = "¡Correcto! ✨"; }
+                else { d.style.background = "#ef4444"; res.innerText = "Error. Recuerda: Will be + ING."; }
+                Array.from(div.children).forEach(c => c.style.pointerEvents = 'none');
+                cur++; btn.style.display = 'block';
+            };
+            div.appendChild(d);
+        });
+    }
+    loadQ();
+</script>
+</body>
+</html>
+</template>
+
+
+
+
+
+
+
+
+
+
+
+<!-- Template embebido para Present Continuous (se carga en iframe dentro del modal) -->
+<template id="prcAppendDoc">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Present Continuous - LuisThree Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ec4899; --secondary: #db2777; --bg: #0f172a;
+            --card-bg: #1e293b; --text: #f8fafc; --accent: #fbcfe8;
+            --success: #22c55e; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.8; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: 3px solid var(--primary); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: thin; }
+        .tab-btn { background: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
+        .tab-btn.active { background: var(--primary); border-color: var(--accent); box-shadow: 0 0 15px rgba(236, 72, 153, 0.6); }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h3 { color: var(--accent); margin: 25px 0 10px 0; font-size: 1.3rem; }
+
+        .example-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .example-item { background: #0b0f1a; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--primary); font-family: 'Courier New', monospace; font-size: 1rem; color: #fdf2f8; }
+        .trans { display: block; font-family: 'Poppins', sans-serif; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; font-style: italic; }
+
+        .note { background: rgba(236, 72, 153, 0.1); border-left: 4px solid var(--primary); padding: 15px; margin: 20px 0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        th { background: var(--secondary); }
+
+        .quiz-option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .quiz-option:hover { background: rgba(236, 72, 153, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mastering Present Continuous</h1>
+        <p>Tutorial de Presente Continuo - LuisThree Edition</p>
+    </header>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/FlZ_ugyET8g" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'estructura')">1. Estructura</button>
+        <button class="tab-btn" onclick="openTab(event, 'uso')">2. Los 2 Usos</button>
+        <button class="tab-btn" onclick="openTab(event, 'adverbios')">3. Adverbios</button>
+        <button class="tab-btn" onclick="openTab(event, 'ortografia')">4. Reglas -ing</button>
+        <button class="tab-btn" onclick="openTab(event, 'ejemplos')">5. Ejemplos Reales</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">🔥 Examen</button>
+    </nav>
+
+    <section id="estructura" class="content-section active">
+        <div class="card">
+            <h2>Estructura Gramatical</h2>
+            <p>Para este tiempo necesitamos el presente del verbo <b>To Be</b> (am, is, are) y el verbo principal terminado en <b>-ing</b>.</p>
+            <ul>
+                <li><b>Afirmativa:</b> Sujeto + <b>am/is/are</b> + Verbo <b>-ing</b>.</li>
+                <li><b>Negativa:</b> Sujeto + <b>am not/isn't/aren't</b> + Verbo <b>-ing</b>.</li>
+                <li><b>Interrogativa:</b> <b>Am/Is/Are</b> + Sujeto + Verbo <b>-ing</b>?</li>
+            </ul>
+            <div class="example-list">
+                <h3>Ejemplos de Estructura:</h3>
+                <div class="example-item">1. You <b>are writing</b> an email.<span class="trans">(Tú estás escribiendo un email)</span></div>
+                <div class="example-item">2. He <b>is watching</b> the match.<span class="trans">(Él está viendo el partido)</span></div>
+                <div class="example-item">3. You <b>aren't writing</b> an email.<span class="trans">(Tú no estás escribiendo un email - Negativa)</span></div>
+                <div class="example-item">4. <b>Are</b> you <b>writing</b> an email?<span class="trans">(¿Estás escribiendo un email? - Interrogativa)</span></div>
+                <div class="example-item">5. I <b>am writing</b> on the blackboard.<span class="trans">(Estoy escribiendo en la pizarra)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="uso" class="content-section">
+        <div class="card">
+            <h2>Los dos usos principales</h2>
+            <p>A diferencia del español, el presente continuo en inglés tiene dos funciones:</p>
+            <ol>
+                <li><b>Momento de hablar:</b> Acciones que ocurren ¡ahora mismo!.</li>
+                <li><b>Planes futuros:</b> Acciones ya decididas o concertadas para el futuro.</li>
+            </ol>
+            <div class="note">💡 <b>Truco:</b> Si añades una palabra como "tomorrow" a una frase de presente continuo, automáticamente se convierte en futuro planeado.</div>
+            <div class="example-list">
+                <h3>Ejemplos de los 2 usos:</h3>
+                <div class="example-item">1. She <b>is playing</b> the piano (Now).<span class="trans">(Ella está tocando el piano ahora)</span></div>
+                <div class="example-item">2. She <b>is playing</b> the piano tomorrow.<span class="trans">(Ella va a tocar el piano mañana - Plan)</span></div>
+                <div class="example-item">3. What <b>are</b> you <b>doing</b> now?<span class="trans">(¿Qué estás haciendo ahora? - Momento de hablar)</span></div>
+                <div class="example-item">4. When <b>are</b> you <b>leaving</b>?<span class="trans">(¿Cuándo te marchas? - Futuro)</span></div>
+                <div class="example-item">5. Tom <b>is playing</b> football next Saturday.<span class="trans">(Tom jugará al fútbol el próximo sábado - Futuro concertado)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="adverbios" class="content-section">
+        <div class="card">
+            <h2>Adverbios de Tiempo</h2>
+            <p>Dependiendo del uso que le demos, utilizaremos unos u otros:</p>
+            <table>
+                <tr><th>Para el AHORA</th><th>Para el FUTURO</th></tr>
+                <tr><td>Now (Ahora)</td><td>Tomorrow (Mañana)</td></tr>
+                <tr><td>At the moment (En este momento)</td><td>Next week/month (La próxima semana/mes)</td></tr>
+            </table>
+            <div class="example-list">
+                <h3>Ejemplos con Adverbios:</h3>
+                <div class="example-item">1. She is watching TV <b>now</b>.<span class="trans">(Ella está viendo la tele ahora)</span></div>
+                <div class="example-item">2. They are playing tennis <b>at the moment</b>.<span class="trans">(Ellos están jugando al tenis en este momento)</span></div>
+                <div class="example-item">3. I am meeting Mary <b>tomorrow</b>.<span class="trans">(Me reuniré con Mary mañana)</span></div>
+                <div class="example-item">4. We are leaving <b>next Sunday</b>.<span class="trans">(Nos vamos el próximo domingo)</span></div>
+                <div class="example-item">5. Are you working <b>next week</b>?<span class="trans">(¿Trabajas la semana que viene?)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ortografia" class="content-section">
+        <div class="card">
+            <h2>Reglas de Ortografía (-ing)</h2>
+            <p>Al añadir <b>-ing</b>, el verbo puede cambiar:</p>
+            <ul>
+                <li><b>Pierden la -e:</b> Write -> Writing, Love -> Loving. (Excepciones: see -> seeing, being).</li>
+                <li><b>Doblan consonante:</b> Verbos cortos (1 sílaba) vocal + consonante: Cut -> Cutting, Stop -> Stopping, Chat -> Chatting.</li>
+                <li><b>Terminados en -L:</b> Travel -> Travelling (doble L).</li>
+                <li><b>Casos raros:</b> Lie -> Lying, Die -> Dying, Tie -> Tying.</li>
+            </ul>
+            <div class="note">⚠️ <b>Error común:</b> ¡No quites la "y" en Study! Se escribe <b>Studying</b>.</div>
+            <div class="example-list">
+                <h3>Ejemplos de cambios:</h3>
+                <div class="example-item">1. Live -> <b>Living</b><span class="trans">(Vivir -> Viviendo)</span></div>
+                <div class="example-item">2. Stop -> <b>Stopping</b><span class="trans">(Parar -> Parando - Doble consonante)</span></div>
+                <div class="example-item">3. Travel -> <b>Travelling</b><span class="trans">(Viajar -> Viajando)</span></div>
+                <div class="example-item">4. Die -> <b>Dying</b><span class="trans">(Morir -> Muriendo)</span></div>
+                <div class="example-item">5. Study -> <b>Studying</b><span class="trans">(Estudiar -> Estudiando - ¡Mantiene la Y!)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejemplos" class="content-section">
+        <div class="card">
+            <h2>Resumen Práctico</h2>
+            <p>Repaso de las oraciones finales de LuisThree:</p>
+            <div class="example-list">
+                <div class="example-item">1. He <b>is watching</b> the match.<span class="trans">(Él está viendo el partido)</span></div>
+                <div class="example-item">2. They <b>are playing</b> tennis.<span class="trans">(Ellos están jugando al tenis)</span></div>
+                <div class="example-item">3. <b>When is</b> he meeting Mary?<span class="trans">(¿Cuándo se reunirá con Mary?)</span></div>
+                <div class="example-item">4. Tom <b>is playing</b> football next Saturday.<span class="trans">(Tom jugará al fútbol el sábado próximo)</span></div>
+                <div class="example-item">5. <b>What are</b> you doing now?<span class="trans">(¿Qué estás haciendo ahora?)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="card">
+            <h2 id="qText">Examen de Present Continuous</h2>
+            <div id="options"></div>
+            <p id="res" style="margin-top:15px; font-weight:bold;"></p>
+            <button id="nBtn" class="tab-btn" style="display:none; margin-top:15px;" onclick="loadQ()">Siguiente</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openTab(evt, name) {
+        let i, content, btn;
+        content = document.getElementsByClassName("content-section");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        btn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
+        document.getElementById(name).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo({top: 450, behavior: 'smooth'});
+    }
+
+    const quiz = [
+        { q: "¿Qué auxiliar usamos para 'You'?", o: ["Am", "Is", "Are"], c: 2 },
+        { q: "¿Cómo se escribe el gerundio de 'Study'?", o: ["Studing", "Studying", "Studiing"], c: 1 },
+        { q: "Si digo 'I am leaving tomorrow', me refiero a...", o: ["Ahora mismo", "Un plan futuro", "El pasado"], c: 1 },
+        { q: "¿Qué pasa con la 'e' en 'Write' al añadir -ing?", o: ["Se mantiene", "Desaparece", "Se dobla"], c: 1 },
+        { q: "¿Cómo se pregunta '¿Qué estás haciendo?'?", o: ["What you are doing?", "What are you doing?", "What doing are you?"], c: 1 }
+    ];
+
+    let cur = 0;
+    function loadQ() {
+        const div = document.getElementById('options');
+        const txt = document.getElementById('qText');
+        const res = document.getElementById('res');
+        const btn = document.getElementById('nBtn');
+        if(cur >= quiz.length) {
+            txt.innerText = "¡Hecho! 🌸";
+            div.innerHTML = "<p>Has dominado el Presente Continuo con LuisThree.</p>";
+            res.innerText = ""; btn.style.display = 'none'; return;
+        }
+        txt.innerText = `${cur+1}. ${quiz[cur].q}`;
+        div.innerHTML = ""; res.innerText = ""; btn.style.display = 'none';
+        quiz[cur].o.forEach((o, i) => {
+            const d = document.createElement('div');
+            d.className = 'quiz-option'; d.innerText = o;
+            d.onclick = () => {
+                if(i === quiz[cur].c) { d.style.background = "#22c55e"; res.innerText = "¡Correcto! ✨"; }
+                else { d.style.background = "#ef4444"; res.innerText = "Error. Revisa las reglas del verbo To Be + ING."; }
+                Array.from(div.children).forEach(c => c.style.pointerEvents = 'none');
+                cur++; btn.style.display = 'block';
+            };
+            div.appendChild(d);
+        });
+    }
+    loadQ();
+</script>
+</body>
+</html>
+</template>
+
+<template id="pcAppendDoc">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Past Continuous - LuisThree Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981; --secondary: #059669; --bg: #0f172a;
+            --card-bg: #1e293b; --text: #f8fafc; --accent: #6ee7b7;
+            --success: #22c55e; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.8; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: 3px solid var(--primary); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: thin; }
+        .tab-btn { background: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
+        .tab-btn.active { background: var(--primary); border-color: var(--accent); box-shadow: 0 0 15px rgba(16, 185, 129, 0.6); }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h3 { color: var(--accent); margin: 25px 0 10px 0; font-size: 1.3rem; }
+
+        .example-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .example-item { background: #0b0f1a; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--primary); font-family: 'Courier New', monospace; font-size: 1rem; color: #ecfdf5; }
+        .trans { display: block; font-family: 'Poppins', sans-serif; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; font-style: italic; }
+
+        .note { background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--primary); padding: 15px; margin: 20px 0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        th { background: var(--secondary); }
+
+        .quiz-option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .quiz-option:hover { background: rgba(16, 185, 129, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mastering Past Continuous</h1>
+        <p>Tutorial de Pasado Continuo - LuisThree Edition</p>
+    </header>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/KlMARiyvJck" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'estructura')">1. Estructura</button>
+        <button class="tab-btn" onclick="openTab(event, 'uso')">2. Uso: When & While</button>
+        <button class="tab-btn" onclick="openTab(event, 'respuestas')">3. Respuestas Cortas</button>
+        <button class="tab-btn" onclick="openTab(event, 'ejemplos')">4. Práctica de Oraciones</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">🔥 Examen</button>
+    </nav>
+
+    <section id="estructura" class="content-section active">
+        <div class="card">
+            <h2>Estructura del Pasado Continuo</h2>
+            <p>Para formar este tiempo necesitamos el pasado del verbo <b>To Be</b> (Was/Were) y el verbo principal con la terminación <b>-ing</b>.</p>
+            <table>
+                <tr><th>Sujeto</th><th>Verbo To Be</th></tr>
+                <tr><td>I, He, She, It</td><td><b>Was</b></td></tr>
+                <tr><td>You, We, They</td><td><b>Were</b></td></tr>
+            </table>
+            <div class="example-list">
+                <h3>Ejemplos de Estructura:</h3>
+                <div class="example-item">1. You <b>were watching</b> TV.<span class="trans">(Tú estabas viendo la tele)</span></div>
+                <div class="example-item">2. She <b>was playing</b> chess.<span class="trans">(Ella estaba jugando al ajedrez)</span></div>
+                <div class="example-item">3. I <b>wasn't studying</b> English.<span class="trans">(No estaba estudiando inglés - Negativa)</span></div>
+                <div class="example-item">4. <b>Were</b> you <b>making</b> lunch?<span class="trans">(¿Estabas preparando la comida? - Interrogativa)</span></div>
+                <div class="example-item">5. We <b>were studying</b> when mom came.<span class="trans">(Estábamos estudiando cuando mamá vino)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="uso" class="content-section">
+        <div class="card">
+            <h2>Uso de When y While</h2>
+            <p>Este tiempo se usa para describir el proceso de una acción en el pasado. Es muy común usar nexos para unir frases:</p>
+            <ul>
+                <li><b>When (Cuando):</b> Suele unir una acción continua con una acción puntual (Past Simple).</li>
+                <li><b>While (Mientras):</b> Suele unir dos acciones que ocurrían al mismo tiempo.</li>
+            </ul>
+            <div class="note">💡 <b>LuisThree dice:</b> Con <i>While</i>, ambas acciones suelen ir en Pasado Continuo. Con <i>When</i>, una interrumpe a la otra.</div>
+            <div class="example-list">
+                <h3>Ejemplos con Nexos:</h3>
+                <div class="example-item">1. I was watching TV <b>when</b> my father arrived.<span class="trans">(Estaba viendo la tele cuando mi padre llegó)</span></div>
+                <div class="example-item">2. <b>While</b> I was sleeping, she was washing the car.<span class="trans">(Mientras yo dormía, ella lavaba el coche)</span></div>
+                <div class="example-item">3. I was ironing <b>while</b> she was writing an email.<span class="trans">(Yo estaba planchando mientras ella escribía un email)</span></div>
+                <div class="example-item">4. We were studying <b>when</b> the phone rang.<span class="trans">(Estábamos estudiando cuando el teléfono sonó)</span></div>
+                <div class="example-item">5. What was he doing <b>when</b> you saw him?<span class="trans">(¿Qué estaba haciendo él cuando lo viste?)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="respuestas" class="content-section">
+        <div class="card">
+            <h2>Respuestas Cortas (Short Answers)</h2>
+            <p>Es importante fijarse en el cambio de sujeto al responder una pregunta directa.</p>
+            <div class="example-list">
+                <h3>Ejemplos de Diálogo:</h3>
+                <div class="example-item">Q: Were you watching TV? <br>A: <b>Yes, I was</b> / <b>No, I wasn't</b>.</div>
+                <div class="example-item">Q: Was she playing chess? <br>A: <b>Yes, she was</b> / <b>No, she wasn't</b>.</div>
+                <div class="example-item">Q: Were they working? <br>A: <b>Yes, they were</b> / <b>No, they weren't</b>.</div>
+                <div class="example-item">Q: Was it raining? <br>A: <b>Yes, it was</b> / <b>No, it wasn't</b>.</div>
+                <div class="example-item">Q: Were we sleeping? <br>A: <b>Yes, we were</b> / <b>No, we weren't</b>.</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejemplos" class="content-section">
+        <div class="card">
+            <h2>Práctica Combinada</h2>
+            <p>Más oraciones del tutorial para consolidar el aprendizaje:</p>
+            <div class="example-list">
+                <div class="example-item">1. She <b>was reading</b> a book.<span class="trans">(Ella estaba leyendo un libro)</span></div>
+                <div class="example-item">2. <b>What were</b> you doing at 8 o'clock?<span class="trans">(¿Qué estabas haciendo a las 8 en punto?)</span></div>
+                <div class="example-item">3. <b>Where was</b> she going?<span class="trans">(¿A dónde estaba yendo ella?)</span></div>
+                <div class="example-item">4. He <b>wasn't studying</b> English yesterday.<span class="trans">(Él no estaba estudiando inglés ayer)</span></div>
+                <div class="example-item">5. <b>Was she playing</b> chess when you arrived?<span class="trans">(¿Estaba ella jugando al ajedrez cuando llegaste?)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="card">
+            <h2 id="qText">Examen de Pasado Continuo</h2>
+            <div id="options"></div>
+            <p id="res" style="margin-top:15px; font-weight:bold;"></p>
+            <button id="nBtn" class="tab-btn" style="display:none; margin-top:15px;" onclick="loadQ()">Siguiente</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openTab(evt, name) {
+        let i, content, btn;
+        content = document.getElementsByClassName("content-section");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        btn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
+        document.getElementById(name).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo({top: 450, behavior: 'smooth'});
+    }
+
+    const quiz = [
+        { q: "¿Cuál es el pasado de 'To Be' para 'She'?", o: ["Were", "Was", "Wasn't -ing"], c: 1 },
+        { q: "¿Qué nexo se usa para unir dos acciones paralelas continuas?", o: ["When", "While", "Then"], c: 1 },
+        { q: "¿Cómo se dice 'Yo no estaba estudiando'?", o: ["I wasn't study", "I weren't studying", "I wasn't studying"], c: 2 },
+        { q: "En la frase 'I was sleeping when...', ¿qué tiempo sigue?", o: ["Past Continuous", "Past Simple", "Present Simple"], c: 1 },
+        { q: "¿Cuál es la respuesta corta correcta a 'Were you watching TV'?", o: ["Yes, I were", "Yes, I was", "Yes, you were"], c: 1 }
+    ];
+
+    let cur = 0;
+    function loadQ() {
+        const div = document.getElementById('options');
+        const txt = document.getElementById('qText');
+        const res = document.getElementById('res');
+        const btn = document.getElementById('nBtn');
+        if(cur >= quiz.length) {
+            txt.innerText = "¡Excelente! 🏆";
+            div.innerHTML = "<p>Has completado el repaso del Past Continuous.</p>";
+            res.innerText = ""; btn.style.display = 'none'; return;
+        }
+        txt.innerText = `${cur+1}. ${quiz[cur].q}`;
+        div.innerHTML = ""; res.innerText = ""; btn.style.display = 'none';
+        quiz[cur].o.forEach((o, i) => {
+            const d = document.createElement('div');
+            d.className = 'quiz-option'; d.innerText = o;
+            d.onclick = () => {
+                if(i === quiz[cur].c) { d.style.background = "#22c55e"; res.innerText = "¡Correcto! ✨"; }
+                else { d.style.background = "#ef4444"; res.innerText = "Error. Recuerda: Was/Were + ING."; }
+                Array.from(div.children).forEach(c => c.style.pointerEvents = 'none');
+                cur++; btn.style.display = 'block';
+            };
+            div.appendChild(d);
+        });
+    }
+    loadQ();
+</script>
+</body>
+</html>
+</template>
 <script>
 /* =========================================================
    DATOS (TD) — 12 tiempos verbales
@@ -1897,11 +4599,14 @@ function setTopbarSpacing() {
    URL HASH ROUTING
 ========================================================= */
 function updateHash() {
+  // Mantiene el hash sincronizado con el tiempo actual (sin romper la UI si no existe el pill)
   history.replaceState(null, '', '#'+cT);
-  document.getElementById('shareLinkTxt').textContent = 'Enlace copiado — #'+cT;
-  setTimeout(()=>{
-    document.getElementById('shareLinkTxt').textContent = 'Copiar enlace a este tiempo';
-  }, 2000);
+}
+
+function refreshSharePill() {
+  const el = document.getElementById('shareLinkTxt');
+  if(!el) return;
+  el.textContent = `Copiar enlace a este tiempo (#${cT})`;
 }
 
 function readHash() {
@@ -2459,6 +5164,7 @@ function render() {
   buildSent();
   buildAdv();
   updateHash();
+  refreshSharePill();
 
   // ── Botones de modo: cada uno con su color distinto ──
   const MODE_COLORS = {
@@ -2676,9 +5382,6 @@ window.onload = () => {
   initTimelineA11y();
   setTopbarSpacing();
   window.addEventListener('resize', setTopbarSpacing);
-
-  document.getElementById('veCount').textContent = `${Object.keys(IRR).length} irregulares`;
-
   // URL hash routing: si hay hash válido, úsalo
   const hashTense = readHash();
   if(hashTense) cT = hashTense;
@@ -2719,6 +5422,199 @@ const ZONE_COLORS = {
 };
 
 const MODE_LABELS = { af:'Afirmativa (+)', neg:'Negativa (−)', int:'Pregunta (?)' };
+
+/* =========================================================
+   GUÍAS EXTENDIDAS (iframe dentro del modal)
+   - Para 'prs' se usa la guía definitiva embebida (template prsAppendDoc)
+   - Para el resto, se genera una guía consistente desde TD (sin depender de archivos externos)
+========================================================= */
+const GUIDE_TIPS = {
+  prs:  ["Recuerda: con He/She/It el verbo lleva -s/-es.", "En negativa y pregunta, el verbo vuelve a V1 (do/does + V1).", "Los adverbios de frecuencia suelen ir antes del verbo principal (always, usually…)."],
+  prc:  ["Usa 'am/is/are + V-ing' para acciones en progreso.", "Muy común con: now, right now, at the moment.", "También sirve para planes ya acordados (I am meeting…)."],
+  prp:  ["Enfoca experiencia o resultado actual (sin decir cuándo).", "Ya/just suelen ir entre have/has y V3.", "Usa 'yet' en neg/preg al final (I haven't… yet)."],
+  prpc: ["Enfoca duración o proceso (have/has been + V-ing).", "Perfecto con for/since para duración.", "Si quieres SOLO resultado (no proceso), usa Present Perfect."],
+  ps:   ["Usa pasado simple con tiempo definido (yesterday, last…, in 2019).", "En negativa/pregunta: did + V1 (no V2).", "Para narrar historias: acciones en secuencia."],
+  pc:   ["Fondo/acción en progreso en el pasado (was/were + V-ing).", "Interrupción típica: when + Past Simple.", "Simultáneo: while + Past Continuous."],
+  pp:   ["Pasado antes de otro pasado (had + V3).", "Muy común con: by the time, before.", "Si mencionas el orden de 2 acciones pasadas, PP aclara cuál fue primero."],
+  ppc:  ["Duración antes de un evento pasado (had been + V-ing).", "Útil para causas/evidencia en el pasado (He was tired because…).", "for/since suelen acompañar este tiempo."],
+  fs:   ["Decisiones al momento, promesas y predicciones (will + V1).", "Para planes ya agendados, suele preferirse Present Continuous.", "En negativa: won't + V1."],
+  fc:   ["Acción en progreso en un momento futuro (will be + V-ing).", "Útil para preguntar planes de forma educada.", "Marcador típico: this time tomorrow."],
+  fp:   ["Acción terminada antes de un punto futuro (will have + V3).", "Marcador típico: by + hora/fecha.", "Muy común: by the time…"],
+  fpc:  ["Duración hasta un punto futuro (will have been + V-ing).", "Combina for/since con by + punto futuro.", "Enfoca el proceso y la continuidad, no solo el resultado."]
+};
+
+function chipsToText(chips){
+  return (chips||[])
+    .filter(c=>c && c.k!=='arr')
+    .map(c=>{
+      // Compacta un poco para guía: Subject→S, Object/Complement→O/C
+      if(c.k==='subj') return 'S';
+      if(c.k==='obj')  return 'O/C';
+      return c.t;
+    })
+    .join(' + ');
+}
+
+function buildGuideDoc(key){
+  const td = TD[key];
+  if(!td) return '';
+  const tips = GUIDE_TIPS[key] || ["Practica con 1 adverbio a la vez para sonar natural.", "Cambia pronombres para automatizar la estructura.", "Haz 3 frases: afirmativa, negativa y pregunta."];
+
+  const structs = ['af','neg','int'].map(m=>{
+    const b = (td.aux && td.aux[m] && td.aux[m][0]) ? td.aux[m][0] : null;
+    const line = b ? chipsToText(b.chips) + (m==='int'?' ?':'') : '';
+    const note = b && b.note ? b.note : '';
+    return {m, line, note};
+  });
+
+  const advCats = td.adverbs || {};
+  const allAdv  = Object.values(advCats).flat().slice(0, 18);
+
+  // HTML para srcdoc (autocontenido)
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escHtml(td.n)} · Guía extendida</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --tx:#f8fafc; --tx2:#cbd5e1;
+    --b:rgba(255,255,255,.10);
+    --accent:${td.c==='--past' ? '#ff7a90' : td.c==='--fut' ? '#ffc040' : '#00e8c4'};
+  }
+  body{font-family:Poppins,system-ui,sans-serif;background:var(--bg);color:var(--tx);padding:16px;line-height:1.75;}
+  .wrap{max-width:980px;margin:0 auto;}
+  .hero{background:linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid var(--b);border-radius:18px;padding:18px 16px;margin-bottom:12px;}
+  h1{margin:0 0 6px;font-size:1.6rem;}
+  .sub{color:var(--tx2);font-size:.95rem;margin:0 0 10px;}
+  .pill{display:inline-block;font-weight:800;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;padding:6px 12px;border-radius:999px;border:1px solid var(--b);color:var(--accent);background:rgba(0,0,0,.18);}
+  .formula{margin-top:10px;font-family:ui-monospace,Consolas,monospace;font-weight:800;color:var(--accent);background:rgba(0,0,0,.22);border:1px solid var(--b);border-radius:12px;padding:10px 12px;display:inline-block;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin:12px 0;}
+  .card{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:14px 12px;}
+  .lbl{font-weight:800;letter-spacing:2px;text-transform:uppercase;font-size:.68rem;color:var(--tx2);margin-bottom:8px;}
+  .use-ico{font-size:1.2rem;margin-bottom:6px;}
+  .use-ti{font-weight:800;margin-bottom:4px;}
+  .use-desc{color:var(--tx2);font-size:.92rem;margin-bottom:8px;}
+  .ex{font-family:ui-monospace,Consolas,monospace;color:var(--accent);font-weight:700;font-size:.9rem;}
+  .ex2{color:var(--tx2);font-style:italic;font-size:.88rem;margin-top:4px;}
+  .struct{display:flex;flex-direction:column;gap:10px;}
+  .line{font-family:ui-monospace,Consolas,monospace;font-weight:800;color:var(--accent);background:rgba(0,0,0,.22);border:1px solid var(--b);border-radius:12px;padding:10px 12px;}
+  .note{color:var(--tx2);font-size:.9rem;margin-top:6px;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{padding:6px 10px;border-radius:999px;border:1px solid var(--b);background:rgba(0,0,0,.18);font-size:.86rem;}
+  .tips li{margin:6px 0;color:var(--tx2);}
+  @media(max-width:520px){ body{padding:12px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <span class="pill">${escHtml(td.z)}</span>
+    <h1>${escHtml(td.n)}</h1>
+    <p class="sub">Guía extendida (resumen ampliado) para practicar estructuras y usos típicos.</p>
+    <div class="formula">${escHtml(td.f)}</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Cuándo se usa</div>
+    <div class="grid">
+      ${(td.uso||[]).map(u=>`
+        <div class="card" style="background:rgba(0,0,0,.12);">
+          <div class="use-ico">${u.ico}</div>
+          <div class="use-ti">${escHtml(u.ti)}</div>
+          <div class="use-desc">${escHtml(u.desc)}</div>
+          <div class="ex">${escHtml(u.en)}</div>
+          <div class="ex2">${escHtml(u.es)}</div>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Estructura</div>
+    <div class="struct">
+      ${structs.map(s=>`
+        <div>
+          <div class="lbl" style="margin-bottom:6px;">${escHtml(MODE_LABELS[s.m]||s.m)}</div>
+          <div class="line">${escHtml(s.line || td.f)}</div>
+          ${s.note ? `<div class="note">${escHtml(s.note)}</div>` : ``}
+        </div>
+      `).join('')}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Adverbios típicos</div>
+    <div class="chips">
+      ${allAdv.length ? allAdv.map(a=>`<span class="chip">${escHtml(a.w)} <span style="opacity:.7;font-style:italic;">(${escHtml(a.e)})</span></span>`).join('') : `<span class="chip">Sin adverbios específicos</span>`}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Tips rápidos</div>
+    <ul class="tips">
+      ${tips.map(t=>`<li>${escHtml(t)}</li>`).join('')}
+    </ul>
+  </div>
+
+  <div class="card" style="text-align:center;">
+    <div class="lbl">Micro‑reto</div>
+    <p class="sub" style="margin-bottom:10px;">Crea 3 oraciones usando el verbo <b>play</b>:</p>
+    <div class="chips" style="justify-content:center;">
+      <span class="chip">1) Afirmativa</span>
+      <span class="chip">2) Negativa</span>
+      <span class="chip">3) Pregunta</span>
+    </div>
+    <p class="sub" style="margin-top:10px;">Luego vuelve a la app y prueba con adverbios.</p>
+  </div>
+</div>
+</body>
+</html>`;
+}
+function prepareGuideDoc(docHtml){
+  if(!docHtml) return docHtml;
+
+  // Replace YouTube embeds inside srcdoc with a safe "Ver video en YouTube" button.
+  // This avoids YouTube "Error 153" that can happen in srcdoc/iframes (e.g., Google Sites).
+  const reWrap = /<div\s+class="video-wrapper">[\s\S]*?<iframe[^>]+src="https?:\/\/(?:www\.)?(?:youtube\.com|youtube-nocookie\.com)\/embed\/([^"?&\/]+)[^"]*"[^>]*><\/iframe>[\s\S]*?<\/div>/gi;
+  const reIfr  = /<iframe[^>]+src="https?:\/\/(?:www\.)?(?:youtube\.com|youtube-nocookie\.com)\/embed\/([^"?&\/]+)[^"]*"[^>]*><\/iframe>/gi;
+
+  let out = docHtml.replace(reWrap, (m,id) => {
+    const url = `https://www.youtube.com/watch?v=${id}`;
+    return `<div class="video-wrapper yt-linkbox"><a class="yt-open" href="${url}" target="_blank" rel="noopener">Ver video en YouTube ▶</a></div>`;
+  });
+
+  out = out.replace(reIfr, (m,id) => {
+    const url = `https://www.youtube.com/watch?v=${id}`;
+    return `<a class="yt-open" href="${url}" target="_blank" rel="noopener">Ver video en YouTube ▶</a>`;
+  });
+
+  if(out !== docHtml){
+    const css = `
+/* YouTube safe link (avoids Error 153 in srcdoc / embedded contexts) */
+.yt-linkbox{padding-bottom:0!important;height:auto!important;min-height:140px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.25);}
+.yt-open{display:inline-flex;align-items:center;gap:10px;padding:14px 18px;border-radius:14px;font-weight:800;text-decoration:none;border:2px solid var(--primary);background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;box-shadow:0 10px 24px rgba(0,0,0,0.35);}
+.yt-open:hover{filter:brightness(1.05);transform:translateY(-1px);}
+.yt-open:active{transform:translateY(0);}
+.yt-open:focus{outline:3px solid var(--accent);outline-offset:3px;}
+`;
+
+    if(/<\/style>/i.test(out)){
+      // Inject right before the first </style>
+      out = out.replace(/<\/style>/i, css + "\n</style>");
+    } else if(/<\/head>/i.test(out)){
+      out = out.replace(/<\/head>/i, `<style>${css}</style>\n</head>`);
+    } else {
+      out = `<style>${css}</style>\n` + out;
+    }
+  }
+
+  return out;
+}
+
+
 
 function openTenseModal(key) {
   const td = TD[key];
@@ -2775,7 +5671,96 @@ function openTenseModal(key) {
     ? allAdv.map(a => `<span class="tm-adv-chip">${escHtml(a.w)}<span style="color:var(--tx3);margin-left:5px;font-style:italic;">${escHtml(a.e)}</span></span>`).join('')
     : '<span style="color:var(--tx3);font-style:italic;font-size:.82rem;">Sin adverbios específicos.</span>';
 
-  // CTA button — go to this tense
+  // Extra: Guía extendida — para 'prs' usa la guía definitiva embebida; para el resto genera guía desde TD
+  const extra = document.getElementById('tmExtra');
+  const ifr   = document.getElementById('tmExtraIfr');
+  const extraTitle = document.getElementById('tmExtraTitle');
+  const extraSub   = document.getElementById('tmExtraSub');
+
+  if(extra){
+    extra.style.display = 'block';
+    if(extraTitle) extraTitle.textContent = `📘 ${td.n} · Guía extendida`;
+    if(extraSub)   extraSub.textContent   = (key === 'prs')
+      ? 'Guía definitiva (interactiva) integrada dentro del modal.'
+      : (key === 'prc')
+        ? 'Guía completa de Present Continuous integrada dentro del modal.'
+        : (key === 'pc')
+          ? 'Guía completa de Past Continuous integrada dentro del modal.'
+          : (key === 'fs')
+        ? 'Guía completa de Future Simple (Will) integrada dentro del modal.'
+        : (key === 'ps')
+          ? 'Guía completa de Past Simple integrada dentro del modal.'
+          : (key === 'prp')
+            ? 'Guía completa de Present Perfect integrada dentro del modal.'
+            : (key === 'prpc')
+              ? 'Guía completa de Present Perfect Continuous integrada dentro del modal.'
+              : (key === 'pp')
+              ? 'Guía completa de Past Perfect integrada dentro del modal.'
+              : (key === 'ppc')
+                ? 'Guía completa de Past Perfect Continuous integrada dentro del modal.'
+                : (key === 'fp')
+                ? 'Guía completa de Future Perfect integrada dentro del modal.'
+                : 'Resumen ampliado con ejemplos, estructura y tips (autogenerado).';
+
+    if(ifr){
+      // Recarga solo si cambia el tiempo
+      const prevKey = ifr.dataset.key || '';
+      if(prevKey !== key){
+        if(key === 'prs'){
+          const tpl = document.getElementById('prsAppendDoc');
+          if(tpl) ifr.srcdoc = prepareGuideDoc(tpl.innerHTML.trim());
+        } else if(key === 'prc'){
+          const tpl = document.getElementById('prcAppendDoc');
+          if(tpl) ifr.srcdoc = prepareGuideDoc(tpl.innerHTML.trim());
+          else    ifr.srcdoc = prepareGuideDoc(buildGuideDoc(key));
+        } else if(key === 'pc'){
+          const tpl = document.getElementById('pcAppendDoc');
+          if(tpl) ifr.srcdoc = prepareGuideDoc(tpl.innerHTML.trim());
+          else    ifr.srcdoc = prepareGuideDoc(buildGuideDoc(key));
+        } else if(key === 'fs'){
+          const tpl = document.getElementById('fsAppendDoc');
+          if(tpl) ifr.srcdoc = prepareGuideDoc(tpl.innerHTML.trim());
+          else    ifr.srcdoc = prepareGuideDoc(buildGuideDoc(key));
+        } else if(key === 'ps'){
+          const tpl = document.getElementById('psAppendDoc');
+          if(tpl) ifr.srcdoc = prepareGuideDoc(tpl.innerHTML.trim());
+          else    ifr.srcdoc = prepareGuideDoc(buildGuideDoc(key));
+        } else if(key === 'prp'){
+          const tpl = document.getElementById('prpAppendDoc');
+          if(tpl) ifr.srcdoc = prepareGuideDoc(tpl.innerHTML.trim());
+          else    ifr.srcdoc = prepareGuideDoc(buildGuideDoc(key));
+        } else if(key === 'prpc'){
+          const tpl = document.getElementById('prpcAppendDoc');
+          if(tpl) ifr.srcdoc = prepareGuideDoc(tpl.innerHTML.trim());
+          else    ifr.srcdoc = prepareGuideDoc(buildGuideDoc(key));
+        } else if(key === 'pp'){
+          const tpl = document.getElementById('ppAppendDoc');
+          if(tpl) ifr.srcdoc = prepareGuideDoc(tpl.innerHTML.trim());
+          else    ifr.srcdoc = prepareGuideDoc(buildGuideDoc(key));
+        } else if(key === 'ppc'){
+          const tpl = document.getElementById('ppcAppendDoc');
+          if(tpl) ifr.srcdoc = prepareGuideDoc(tpl.innerHTML.trim());
+          else    ifr.srcdoc = prepareGuideDoc(buildGuideDoc(key));
+        } else if(key === 'fp'){
+          const tpl = document.getElementById('fpAppendDoc');
+          if(tpl) ifr.srcdoc = prepareGuideDoc(tpl.innerHTML.trim());
+          else    ifr.srcdoc = prepareGuideDoc(buildGuideDoc(key));
+        } else if(key === 'fpc'){
+          const tpl = document.getElementById('fpcAppendDoc');
+          if(tpl) ifr.srcdoc = prepareGuideDoc(tpl.innerHTML.trim());
+          else    ifr.srcdoc = prepareGuideDoc(buildGuideDoc(key));
+        } else if(key === 'fc'){
+          const tpl = document.getElementById('fcAppendDoc');
+          if(tpl) ifr.srcdoc = prepareGuideDoc(tpl.innerHTML.trim());
+          else    ifr.srcdoc = prepareGuideDoc(buildGuideDoc(key));
+        } else {
+          ifr.srcdoc = prepareGuideDoc(buildGuideDoc(key));
+        }
+        ifr.dataset.key = key;
+      }
+    }
+  }
+// CTA button — go to this tense
   const btn = document.getElementById('tmBtnGo');
   btn.style.background = zc.btnBg;
   btn.style.color      = zc.btnColor;
