@@ -169,8 +169,6 @@ html.light .topbar { background: rgba(255,255,255,.86); box-shadow: 0 10px 30px 
 .ts-name { font-family: 'JetBrains Mono', monospace; font-weight: 900; font-size: .92rem; letter-spacing: .4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 44vw; }
 .ts-zone { font-family: 'JetBrains Mono', monospace; font-weight: 900; font-size: .70rem; letter-spacing: 2px; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--b2); color: var(--tx); flex: 0 0 auto; }
 .topbar-actions { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
-.topbar a.tbtn{ text-decoration:none; }
-
 
 .tbtn {
   width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--b2);
@@ -617,6 +615,215 @@ html.light .modal-box { box-shadow: 0 24px 80px rgba(0,0,0,.18); }
 @media (prefers-reduced-motion: reduce) {
   .card:hover { transform: none; }
 }
+
+/* ── FOOTER TIMELINE ── */
+.site-footer {
+  position: relative; z-index: 1;
+  background: rgba(8,15,26,.92);
+  border-top: 1px solid var(--b1);
+  backdrop-filter: blur(10px);
+  padding: 48px 20px 36px;
+  margin-top: 40px;
+}
+html.light .site-footer { background: rgba(242,247,253,.96); }
+
+.footer-title {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem; letter-spacing: 3.5px; text-transform: uppercase;
+  color: var(--tx3); font-weight: 900; margin-bottom: 36px;
+}
+.footer-title span { color: var(--teal); }
+
+/* Footer timeline — wider, non-sticky */
+.ftl-outer {
+  max-width: 1060px; margin: 0 auto;
+  position: relative; padding: 50px 14px 54px;
+  overflow-x: auto;
+}
+.ftl-track {
+  position: relative; height: 4px; min-width: 780px; border-radius: 2px;
+  background: linear-gradient(to right,
+    rgba(232,80,106,.25) 0%,   rgba(232,80,106,.25) 36%,
+    rgba(0,200,168,.25) 36%,   rgba(0,200,168,.25) 64%,
+    rgba(240,154,26,.25) 64%,  rgba(240,154,26,.25) 100%);
+}
+.ftl-zlb {
+  position: absolute; top: -34px;
+  font-family: 'JetBrains Mono', monospace; font-size: .55rem;
+  letter-spacing: 2.5px; text-transform: uppercase; font-weight: 800;
+  padding: 3px 10px; border-radius: 16px;
+}
+.ftl-zlb.zp { left: 5%;  color: var(--past2); background: var(--past-a); border: 1px solid rgba(232,80,106,.26); }
+.ftl-zlb.zn { left: 39%; color: var(--pres2); background: var(--pres-a); border: 1px solid rgba(0,200,168,.26); }
+.ftl-zlb.zf { left: 67%; color: var(--fut2);  background: var(--fut-a);  border: 1px solid rgba(240,154,26,.26); }
+
+/* Footer timeline now marker */
+.ftl-now { position: absolute; left: 44.5%; top: 50%; transform: translate(-50%,-50%); z-index: 4; pointer-events: none; }
+.ftl-now-line { width: 2px; height: 58px; background: linear-gradient(to bottom,transparent,var(--teal2),transparent); margin: 0 auto; position: relative; top: -28px; }
+.ftl-now-dot  { width: 8px; height: 8px; border-radius: 50%; background: var(--teal2); position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); animation: heartbeat 2.4s ease-in-out infinite; }
+.ftl-now-lbl  { position: absolute; top: -38px; left: 50%; transform: translateX(-50%); font-family: 'JetBrains Mono', monospace; font-size: .52rem; letter-spacing: 3px; color: var(--teal2); white-space: nowrap; }
+
+/* Footer timeline nodes */
+.ftn {
+  position: absolute; top: 50%; transform: translate(-50%,-50%);
+  z-index: 3; cursor: pointer; outline: none; background: none; border: none; padding: 0;
+}
+.ftn .fdot {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: currentColor; border: 2px solid rgba(8,15,26,.85);
+  transition: transform .18s ease, box-shadow .18s ease;
+  margin: 0 auto;
+}
+html.light .ftn .fdot { border-color: rgba(240,246,255,.92); }
+.ftn:hover .fdot { transform: scale(1.9); box-shadow: 0 0 14px currentColor; }
+.ftn:focus-visible .fdot { box-shadow: 0 0 0 3px rgba(108,142,245,.55); }
+.ftn .ftlbl {
+  position: absolute; white-space: nowrap;
+  font-size: .60rem; font-weight: 800; color: var(--tx3);
+  width: 118px; text-align: center;
+  left: 50%; transform: translateX(-50%);
+  pointer-events: none; line-height: 1.3;
+}
+.ftn .ftlbl.u { bottom: 22px; }
+.ftn .ftlbl.d { top: 22px; }
+.ftn:hover .ftlbl { color: var(--tx2); }
+.ftn .fclick-hint {
+  position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+  font-size: .48rem; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--tx3); opacity: 0; white-space: nowrap; pointer-events: none;
+  transition: opacity .18s;
+}
+.ftn .ftlbl.d ~ .fclick-hint { bottom: auto; top: -18px; }
+.ftn:hover .fclick-hint { opacity: .7; }
+
+/* Footer legend */
+.footer-legend {
+  display: flex; justify-content: center; gap: 22px; flex-wrap: wrap;
+  margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--b0);
+}
+.fl-item {
+  display: flex; align-items: center; gap: 7px;
+  font-family: 'JetBrains Mono', monospace; font-size: .60rem;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--tx3);
+}
+.fl-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── TENSE MODAL (educativo) ── */
+.tm-overlay {
+  position: fixed; inset: 0; z-index: 200000;
+  background: rgba(4,9,18,.82);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s ease;
+}
+.tm-overlay.open { opacity: 1; pointer-events: all; }
+
+.tm-box {
+  background: var(--s1); border: 1px solid var(--b2);
+  border-radius: 24px; padding: 28px 26px;
+  max-width: 620px; width: 100%;
+  max-height: 88vh; overflow-y: auto;
+  box-shadow: 0 32px 80px rgba(0,0,0,.45);
+  transform: translateY(20px) scale(.97);
+  transition: transform .28s cubic-bezier(.22,1,.36,1), opacity .25s ease;
+  position: relative;
+}
+.tm-overlay.open .tm-box { transform: none; }
+
+.tm-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 34px; height: 34px; border-radius: 10px;
+  border: 1px solid var(--b2); background: var(--s2); color: var(--tx2);
+  font-size: 1.1rem; display: grid; place-items: center; cursor: pointer;
+}
+.tm-close:hover { background: var(--past-a); border-color: var(--past); color: var(--past2); }
+
+.tm-zone-badge {
+  display: inline-block; font-family: 'JetBrains Mono', monospace;
+  font-size: .55rem; letter-spacing: 2.5px; text-transform: uppercase;
+  font-weight: 900; padding: 4px 12px; border-radius: 99px; margin-bottom: 10px;
+}
+.tm-title {
+  font-family: 'Fraunces', serif; font-size: 1.9rem;
+  font-weight: 900; font-style: italic; margin-bottom: 4px;
+}
+.tm-formula {
+  font-family: 'JetBrains Mono', monospace; font-size: .84rem;
+  padding: 10px 14px; border-radius: 11px; margin-bottom: 18px;
+  background: var(--bg); border: 1px solid var(--b2); color: var(--teal2);
+  display: inline-block;
+}
+.tm-section-lbl {
+  font-family: 'JetBrains Mono', monospace; font-size: .55rem;
+  letter-spacing: 2.5px; text-transform: uppercase; color: var(--tx3);
+  font-weight: 900; margin-bottom: 10px;
+}
+.tm-uso-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 10px; margin-bottom: 18px; }
+.tm-uso-card {
+  background: var(--s2); border: 1px solid var(--b1);
+  border-radius: 14px; padding: 13px 12px;
+}
+.tm-uso-ico  { font-size: 1.2rem; margin-bottom: 5px; }
+.tm-uso-ti   { font-size: .88rem; font-weight: 900; color: var(--tx); margin-bottom: 3px; }
+.tm-uso-desc { font-size: .78rem; color: var(--tx2); line-height: 1.5; margin-bottom: 7px; }
+.tm-uso-en   { font-family: 'JetBrains Mono', monospace; font-size: .70rem; color: var(--teal2); margin-bottom: 2px; }
+.tm-uso-es   { font-size: .72rem; color: var(--tx3); font-style: italic; }
+
+.tm-struct {
+  display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px;
+}
+.tm-struct-row {
+  background: var(--s2); border: 1px solid var(--b1);
+  border-radius: 12px; padding: 12px 14px;
+}
+.tm-struct-mode {
+  font-family: 'JetBrains Mono', monospace; font-size: .52rem;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--tx3);
+  font-weight: 900; margin-bottom: 8px;
+}
+.tm-chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 6px; }
+.tm-chip {
+  display: inline-flex; align-items: center; padding: 4px 10px;
+  border-radius: 8px; font-family: 'JetBrains Mono', monospace;
+  font-size: .70rem; font-weight: 900;
+}
+.tm-chip.ch-subj { background: rgba(0,200,168,.12); color: var(--teal2); border: 1px solid rgba(0,200,168,.30); }
+.tm-chip.ch-aux  { background: var(--violet-a); color: #d7c3ff; border: 1px solid rgba(168,127,240,.34); }
+.tm-chip.ch-neg  { background: var(--past-a); color: var(--past2); border: 1px solid rgba(232,80,106,.34); }
+.tm-chip.ch-verb { background: rgba(108,142,245,.12); color: var(--indigo); border: 1px solid rgba(108,142,245,.34); }
+.tm-chip.ch-obj  { background: rgba(255,255,255,.04); color: var(--tx2); border: 1px solid var(--b1); }
+.tm-chip.ch-arr  { color: var(--tx3); font-size: .9rem; padding: 0 2px; background: none; border: none; }
+.tm-struct-note  { font-size: .76rem; color: var(--tx2); font-style: italic; line-height: 1.5; }
+
+.tm-adv-list {
+  display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px;
+}
+.tm-adv-chip {
+  padding: 5px 11px; border-radius: 999px;
+  background: var(--indigo-a); border: 1px solid rgba(108,142,245,.22);
+  color: var(--tx2); font-size: .76rem; font-weight: 700;
+}
+
+.tm-cta {
+  display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
+  padding-top: 14px; border-top: 1px solid var(--b1);
+}
+.tm-btn-go {
+  padding: 11px 22px; border-radius: 999px; border: none;
+  font-weight: 900; font-size: .82rem; letter-spacing: .4px;
+  cursor: pointer; transition: transform .16s, box-shadow .16s;
+}
+.tm-btn-go:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.22); }
+.tm-btn-close2 {
+  padding: 11px 22px; border-radius: 999px;
+  border: 1px solid var(--b2); background: transparent;
+  color: var(--tx2); font-weight: 900; font-size: .82rem;
+  cursor: pointer;
+}
+.tm-btn-close2:hover { border-color: var(--b3); color: var(--tx); background: var(--s2); }
 </style>
 </head>
 <body>
@@ -625,7 +832,6 @@ html.light .modal-box { box-shadow: 0 24px 80px rgba(0,0,0,.18); }
 <div id="topBar" class="topbar" aria-label="Barra fija de estado">
   <div id="tenseInfo" class="topbar-info" role="status" aria-live="polite"></div>
   <div class="topbar-actions" aria-label="Controles de accesibilidad">
-    <a class="tbtn" href="neuroverbs.html" aria-label="Volver a la página principal" title="Volver a la página principal" style="text-decoration:none;">🏠</a>
     <button class="tbtn" id="btnTheme" onclick="toggleTheme()" aria-label="Cambiar tema" title="Tema claro/oscuro">🌓</button>
     <button class="tbtn" id="btnBig" onclick="toggleBigText()" aria-pressed="false" aria-label="Texto grande" title="Texto grande"><small>A+</small></button>
     <button class="tbtn" id="btnHC" onclick="toggleHighContrast()" aria-pressed="false" aria-label="Alto contraste" title="Alto contraste">◐</button>
@@ -804,6 +1010,128 @@ html.light .modal-box { box-shadow: 0 24px 80px rgba(0,0,0,.18); }
 </div>
 
 </div><!-- /wrap -->
+
+<!-- ══ TENSE INFO MODAL (footer timeline) ══ -->
+<div id="tmOverlay" class="tm-overlay" role="dialog" aria-modal="true" aria-labelledby="tmTitle" onclick="if(event.target===this)closeTenseModal()">
+  <div class="tm-box" id="tmBox">
+    <button class="tm-close" onclick="closeTenseModal()" aria-label="Cerrar">✕</button>
+    <div id="tmZone" class="tm-zone-badge"></div>
+    <div id="tmTitle" class="tm-title"></div>
+    <div id="tmFormula" class="tm-formula"></div>
+
+    <div class="tm-section-lbl">◎ Cuándo se usa</div>
+    <div id="tmUso" class="tm-uso-grid"></div>
+
+    <div class="tm-section-lbl">⬡ Estructura (Afirmativa · Negativa · Pregunta)</div>
+    <div id="tmStruct" class="tm-struct"></div>
+
+    <div class="tm-section-lbl">◈ Adverbios típicos</div>
+    <div id="tmAdv" class="tm-adv-list"></div>
+
+    <div class="tm-cta">
+      <button id="tmBtnGo" class="tm-btn-go" onclick="closeTenseModal()">
+        Explorar este tiempo →
+      </button>
+      <button class="tm-btn-close2" onclick="closeTenseModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER CON TIMELINE EDUCATIVA ══ -->
+<footer class="site-footer" aria-label="Línea de tiempo educativa de tiempos verbales">
+  <div class="footer-title">
+    <span>◉</span> Mapa de los 12 tiempos verbales · haz clic en cada punto para aprender
+  </div>
+
+  <div class="ftl-outer">
+    <!-- Zone labels -->
+    <span class="ftl-zlb zp">Pasado</span>
+    <span class="ftl-zlb zn">Presente</span>
+    <span class="ftl-zlb zf">Futuro</span>
+
+    <div class="ftl-track" role="group" aria-label="Mapa de tiempos verbales">
+      <!-- Now marker -->
+      <div class="ftl-now" aria-hidden="true">
+        <div class="ftl-now-line"></div>
+        <div class="ftl-now-dot"></div>
+        <div class="ftl-now-lbl">AHORA</div>
+      </div>
+
+      <!-- Pasado -->
+      <button class="ftn" style="left:4%;color:var(--past);"   onclick="openTenseModal('ppc')"  aria-label="Past Perfect Continuous — clic para aprender">
+        <div class="fdot"></div>
+        <span class="ftlbl u">Past Perf. Cont.</span>
+        <span class="fclick-hint">ver →</span>
+      </button>
+      <button class="ftn" style="left:12%;color:var(--past);"  onclick="openTenseModal('pp')"   aria-label="Past Perfect — clic para aprender">
+        <div class="fdot"></div>
+        <span class="ftlbl d">Past Perfect</span>
+        <span class="fclick-hint">ver →</span>
+      </button>
+      <button class="ftn" style="left:21%;color:var(--past);"  onclick="openTenseModal('pc')"   aria-label="Past Continuous — clic para aprender">
+        <div class="fdot"></div>
+        <span class="ftlbl u">Past Continuous</span>
+        <span class="fclick-hint">ver →</span>
+      </button>
+      <button class="ftn" style="left:31%;color:var(--past);"  onclick="openTenseModal('ps')"   aria-label="Past Simple — clic para aprender">
+        <div class="fdot"></div>
+        <span class="ftlbl d">Past Simple</span>
+        <span class="fclick-hint">ver →</span>
+      </button>
+
+      <!-- Presente -->
+      <button class="ftn" style="left:47%;color:var(--pres);"  onclick="openTenseModal('prc')"  aria-label="Present Continuous — clic para aprender">
+        <div class="fdot"></div>
+        <span class="ftlbl u">Pres. Continuous</span>
+        <span class="fclick-hint">ver →</span>
+      </button>
+      <button class="ftn" style="left:52.5%;color:var(--pres);" onclick="openTenseModal('prs')" aria-label="Present Simple — clic para aprender">
+        <div class="fdot"></div>
+        <span class="ftlbl d">Pres. Simple</span>
+        <span class="fclick-hint">ver →</span>
+      </button>
+      <button class="ftn" style="left:58%;color:var(--pres);"  onclick="openTenseModal('prp')"  aria-label="Present Perfect — clic para aprender">
+        <div class="fdot"></div>
+        <span class="ftlbl u">Pres. Perfect</span>
+        <span class="fclick-hint">ver →</span>
+      </button>
+      <button class="ftn" style="left:64%;color:var(--pres);"  onclick="openTenseModal('prpc')" aria-label="Present Perfect Continuous — clic para aprender">
+        <div class="fdot"></div>
+        <span class="ftlbl d">Pres. Perf. Cont.</span>
+        <span class="fclick-hint">ver →</span>
+      </button>
+
+      <!-- Futuro -->
+      <button class="ftn" style="left:71%;color:var(--fut);"   onclick="openTenseModal('fs')"   aria-label="Future Simple — clic para aprender">
+        <div class="fdot"></div>
+        <span class="ftlbl u">Future Simple</span>
+        <span class="fclick-hint">ver →</span>
+      </button>
+      <button class="ftn" style="left:78%;color:var(--fut);"   onclick="openTenseModal('fc')"   aria-label="Future Continuous — clic para aprender">
+        <div class="fdot"></div>
+        <span class="ftlbl d">Future Continuous</span>
+        <span class="fclick-hint">ver →</span>
+      </button>
+      <button class="ftn" style="left:85%;color:var(--fut);"   onclick="openTenseModal('fp')"   aria-label="Future Perfect — clic para aprender">
+        <div class="fdot"></div>
+        <span class="ftlbl u">Future Perfect</span>
+        <span class="fclick-hint">ver →</span>
+      </button>
+      <button class="ftn" style="left:92%;color:var(--fut);"   onclick="openTenseModal('fpc')"  aria-label="Future Perfect Continuous — clic para aprender">
+        <div class="fdot"></div>
+        <span class="ftlbl d">Fut. Perf. Cont.</span>
+        <span class="fclick-hint">ver →</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="footer-legend">
+    <div class="fl-item"><div class="fl-dot" style="background:var(--past2);"></div>Pasado</div>
+    <div class="fl-item"><div class="fl-dot" style="background:var(--pres2);"></div>Presente</div>
+    <div class="fl-item"><div class="fl-dot" style="background:var(--fut2);"></div>Futuro</div>
+    <div class="fl-item" style="color:var(--tx3); font-style:italic;">Neuroverbs v8.0 · Motor de conjugación</div>
+  </div>
+</footer>
 
 <script>
 /* =========================================================
@@ -2378,6 +2706,100 @@ window.onload = () => {
   if(!restored && !hashTense) { cAdv.clear(); cAdvMap.clear(); }
   render();
 };
+/* =========================================================
+   TENSE INFO MODAL — footer timeline
+========================================================= */
+const ZONE_COLORS = {
+  '--past': { bg:'rgba(232,80,106,.15)', border:'rgba(232,80,106,.35)', color:'var(--past2)', btnBg:'var(--past)', btnColor:'#fff' },
+  '--pres': { bg:'rgba(0,200,168,.12)',  border:'rgba(0,200,168,.30)',  color:'var(--pres2)', btnBg:'var(--teal)', btnColor:'#061513' },
+  '--fut':  { bg:'rgba(240,154,26,.12)', border:'rgba(240,154,26,.30)', color:'var(--fut2)',  btnBg:'var(--fut)',  btnColor:'#1a0800' },
+};
+
+const MODE_LABELS = { af:'Afirmativa (+)', neg:'Negativa (−)', int:'Pregunta (?)' };
+
+function openTenseModal(key) {
+  const td = TD[key];
+  if(!td) return;
+
+  const ov  = document.getElementById('tmOverlay');
+  const zc  = ZONE_COLORS[td.c] || ZONE_COLORS['--pres'];
+
+  // Zone badge
+  const zone = document.getElementById('tmZone');
+  zone.textContent = td.z;
+  zone.style.background  = zc.bg;
+  zone.style.border      = `1px solid ${zc.border}`;
+  zone.style.color       = zc.color;
+  zone.style.fontFamily  = "'JetBrains Mono', monospace";
+  zone.style.fontWeight  = '900';
+
+  // Title & formula
+  document.getElementById('tmTitle').textContent   = td.n;
+  document.getElementById('tmFormula').textContent = td.f;
+
+  // Uso cards
+  document.getElementById('tmUso').innerHTML = (td.uso||[]).map(u => `
+    <div class="tm-uso-card">
+      <div class="tm-uso-ico">${u.ico}</div>
+      <div class="tm-uso-ti">${escHtml(u.ti)}</div>
+      <div class="tm-uso-desc">${escHtml(u.desc)}</div>
+      <div class="tm-uso-en">${escHtml(u.en)}</div>
+      <div class="tm-uso-es">${escHtml(u.es)}</div>
+    </div>`).join('');
+
+  // Structure — af/neg/int
+  const auxData = td.aux || {};
+  document.getElementById('tmStruct').innerHTML = ['af','neg','int'].map(m => {
+    const blocks = auxData[m] || [];
+    if(!blocks.length) return '';
+    const b = blocks[0];
+    const chips = (b.chips||[]).map(c => {
+      if(c.k==='arr') return `<span class="tm-chip ch-arr">→</span>`;
+      return `<span class="tm-chip ch-${c.k}">${escHtml(c.t)}</span>`;
+    }).join('');
+    return `
+      <div class="tm-struct-row">
+        <div class="tm-struct-mode">${MODE_LABELS[m]}</div>
+        <div class="tm-chips">${chips}</div>
+        ${b.note ? `<div class="tm-struct-note">${escHtml(b.note)}</div>` : ''}
+      </div>`;
+  }).join('');
+
+  // Adverbs — flatten all categories
+  const advCats = td.adverbs || {};
+  const allAdv  = Object.values(advCats).flat();
+  document.getElementById('tmAdv').innerHTML = allAdv.length
+    ? allAdv.map(a => `<span class="tm-adv-chip">${escHtml(a.w)}<span style="color:var(--tx3);margin-left:5px;font-style:italic;">${escHtml(a.e)}</span></span>`).join('')
+    : '<span style="color:var(--tx3);font-style:italic;font-size:.82rem;">Sin adverbios específicos.</span>';
+
+  // CTA button — go to this tense
+  const btn = document.getElementById('tmBtnGo');
+  btn.style.background = zc.btnBg;
+  btn.style.color      = zc.btnColor;
+  btn.textContent      = `Explorar: ${td.n} →`;
+  btn.onclick = () => {
+    closeTenseModal();
+    // Navigate to top and select tense
+    const nd = document.getElementById('nd-'+key);
+    selT(nd ? {currentTarget:nd} : {currentTarget:null}, key);
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+
+  ov.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  // Focus close button for a11y
+  setTimeout(() => ov.querySelector('.tm-close')?.focus(), 80);
+}
+
+function closeTenseModal() {
+  document.getElementById('tmOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Escape key closes tense modal
+document.addEventListener('keydown', ev => {
+  if(ev.key === 'Escape') closeTenseModal();
+});
 </script>
 </body>
 </html>
