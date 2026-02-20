@@ -180,6 +180,8 @@ html.light .tbtn { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
 .tbtn[aria-pressed="true"] { background: var(--teal-a); border-color: var(--teal); color: var(--teal2); }
 .tbtn small { font-family: 'JetBrains Mono', monospace; font-weight: 900; letter-spacing: 1px; }
 
+.topbar-actions a.tbtn{ text-decoration:none; padding:0; }
+
 /* Stats badge en topbar */
 .ts-progress {
   display: flex; align-items: center; gap: 5px;
@@ -832,6 +834,7 @@ html.light .ftn .fdot { border-color: rgba(240,246,255,.92); }
 <div id="topBar" class="topbar" aria-label="Barra fija de estado">
   <div id="tenseInfo" class="topbar-info" role="status" aria-live="polite"></div>
   <div class="topbar-actions" aria-label="Controles de accesibilidad">
+    <a class="tbtn" href="neuroverbs.html" aria-label="Ir a Neuroverbs" title="Inicio">🏠</a>
     <button class="tbtn" id="btnTheme" onclick="toggleTheme()" aria-label="Cambiar tema" title="Tema claro/oscuro">🌓</button>
     <button class="tbtn" id="btnBig" onclick="toggleBigText()" aria-pressed="false" aria-label="Texto grande" title="Texto grande"><small>A+</small></button>
     <button class="tbtn" id="btnHC" onclick="toggleHighContrast()" aria-pressed="false" aria-label="Alto contraste" title="Alto contraste">◐</button>
