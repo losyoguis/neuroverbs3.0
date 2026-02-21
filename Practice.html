@@ -1048,15 +1048,6 @@ html.light .ftn .fdot { border-color: rgba(240,246,255,.92); }
 
     <div class="tm-section-lbl">◈ Adverbios típicos</div>
     <div id="tmAdv" class="tm-adv-list"></div>
-
-    <div class="tm-cta">
-      <button id="tmBtnGo" class="tm-btn-go" onclick="closeTenseModal()">
-        Explorar este tiempo →
-      </button>
-      <button class="tm-btn-close2" onclick="closeTenseModal()">Cerrar</button>
-    </div>
-
-    
     <!-- Extra: Guía extendida (se carga en iframe dentro del modal) -->
     <div id="tmExtra" class="tm-extra" aria-label="Guía extendida del tiempo verbal">
       <div id="tmExtraTitle" class="tm-extra-title">📘 Guía extendida</div>
@@ -5877,16 +5868,18 @@ function openTenseModal(key) {
   }
 // CTA button — go to this tense
   const btn = document.getElementById('tmBtnGo');
-  btn.style.background = zc.btnBg;
-  btn.style.color      = zc.btnColor;
-  btn.textContent      = `Explorar: ${td.n} →`;
-  btn.onclick = () => {
-    closeTenseModal();
-    // Navigate to top and select tense
-    const nd = document.getElementById('nd-'+key);
-    selT(nd ? {currentTarget:nd} : {currentTarget:null}, key);
-    window.scrollTo({top:0, behavior:'smooth'});
-  };
+  if(btn){
+    btn.style.background = zc.btnBg;
+    btn.style.color      = zc.btnColor;
+    btn.textContent      = `Explorar: ${td.n} →`;
+    btn.onclick = () => {
+      closeTenseModal();
+      // Navigate to top and select tense
+      const nd = document.getElementById('nd-'+key);
+      selT(nd ? {currentTarget:nd} : {currentTarget:null}, key);
+      window.scrollTo({top:0, behavior:'smooth'});
+    };
+  }
 
   ov.classList.add('open');
   document.body.style.overflow = 'hidden';
