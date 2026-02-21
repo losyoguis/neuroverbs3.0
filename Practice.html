@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -465,7 +466,7 @@ html.light .sent-disp.mode-int { background: linear-gradient(160deg, #fff 0%, rg
 html.light .sent-disp { background: linear-gradient(160deg, #fff 0%, #edf4fc 100%); }
 
 /* Copy button */
-.sent-copy-row { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.sent-copy-row { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-bottom: 8px; }
 .sent-copy {
   font-family: 'JetBrains Mono', monospace; font-size: .62rem; letter-spacing: 1.5px;
   text-transform: uppercase; font-weight: 900;
@@ -994,6 +995,9 @@ html.light .ftn .fdot { border-color: rgba(240,246,255,.92); }
     <div class="sent-copy-row">
       <button class="sent-copy" id="copyBtn" onclick="copySentence()" title="Copiar oración al portapapeles">
         📋 Copiar
+      </button>
+      <button class="sent-copy" id="ttsBtn" onclick="speakSentence()" title="Escuchar oración en inglés (lento)">
+        🔊 Escuchar
       </button>
     </div>
     <div id="sentEn" class="sent-en"></div>
@@ -4400,6 +4404,31 @@ const ES_IMP_IRR = {
   "ver":["veía","veías","veía","veíamos","veían"],
 };
 
+
+
+/* =============================
+   ESPAÑOL — PARTICIPIOS / GERUNDIOS (para traducciones correctas)
+   Nota: se usan claves SIN tildes (stripAccents)
+============================= */
+const ES_PART_IRR = {
+  // participios irregulares frecuentes
+  abrir:"abierto", cubrir:"cubierto", decir:"dicho", escribir:"escrito", hacer:"hecho",
+  morir:"muerto", poner:"puesto", romper:"roto", ver:"visto", volver:"vuelto",
+  resolver:"resuelto", freir:"frito", imprimir:"impreso"
+};
+
+const ES_GER_IRR = {
+  // gerundios irregulares frecuentes
+  ir:"yendo", venir:"viniendo", dormir:"durmiendo", morir:"muriendo", pedir:"pidiendo",
+  sentir:"sintiendo", decir:"diciendo", hacer:"haciendo", poder:"pudiendo",
+  poner:"poniendo", tener:"teniendo", ver:"viendo", leer:"leyendo",
+  reir:"riendo", sonreir:"sonriendo", oir:"oyendo", traer:"trayendo"
+};
+
+function stripAccents(s){
+  return (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+}
+
 /* =========================================================
    MORFOLOGÍA INGLESA
 ========================================================= */
@@ -4822,13 +4851,24 @@ function updateTenseStick() {
 ========================================================= */
 function espVerbPhrase() {
   const pi  = ES_IDX[cP];
-  const raw = (cV.esp||'').split(/[\/·]/)[0].trim().toLowerCase();
+  const raw0 = (cV.esp||'').split(/[\/·]/)[0].trim().toLowerCase();
+  const raw  = stripAccents(raw0); // clave sin tildes para reglas y diccionarios
   const term = raw.slice(-2), root = raw.slice(0,-2);
   const isAr = term==='ar', isEr = term==='er', isIr = term==='ir';
   const ok = (isAr||isEr||isIr);
 
-  const part = ok ? (root+(isAr?'ado':'ido')) : '(participio)';
-  const ger  = ok ? (root+(isAr?'ando':'iendo')) : '(gerundio)';
+  // Participio: irregular > regla regular (con tilde en í cuando corresponde)
+  const part = ES_PART_IRR[raw] || (
+    ok ? (root + (isAr ? 'ado' : (/[aeo]$/.test(root) ? 'ído' : 'ido'))) : '(participio)'
+  );
+
+  // Gerundio: irregular > regla regular (leyendo/cayendo/trayendo/oyendo, -uir => yendo)
+  const ger  = ES_GER_IRR[raw] || (
+    ok ? (
+      isAr ? (root+'ando')
+           : ( ((raw.endsWith('uir') && !raw.endsWith('guir')) || /[aeo]$/.test(root)) ? (root+'yendo') : (root+'iendo') )
+    ) : '(gerundio)'
+  );
 
   function pres() {
     if(ES_PRES_IRR[raw]) return ES_PRES_IRR[raw][pi];
@@ -5022,6 +5062,81 @@ function copySentence() {
   } else {
     showToast('Copia el texto directamente de la pantalla', '📋');
   }
+}
+
+
+/* =========================================================
+   🔊 TEXTO A VOZ (INGLÉS LENTO)
+   - Lee EXACTAMENTE la oración en inglés tal como se muestra
+     (incluye adverbios y marcadores de tiempo si están activos)
+========================================================= */
+let __ttsVoice = null;
+
+function __pickTTSVoice(){
+  if(!('speechSynthesis' in window)) return;
+  const voices = (speechSynthesis.getVoices && speechSynthesis.getVoices()) || [];
+  if(!voices.length) return;
+
+  const byLang = v => /^en(-|_)/i.test(v.lang || '');
+  const byName = v => /Google|Microsoft|Samantha|Daniel|Karen|Moira|Serena|Alex|English/i.test(v.name || '');
+
+  __ttsVoice =
+    voices.find(v => byLang(v) && byName(v)) ||
+    voices.find(v => byLang(v)) ||
+    voices.find(v => /English/i.test(v.name || '')) ||
+    null;
+}
+
+if('speechSynthesis' in window){
+  __pickTTSVoice();
+  if(typeof speechSynthesis.onvoiceschanged !== 'undefined'){
+    speechSynthesis.onvoiceschanged = __pickTTSVoice;
+  }
+}
+
+function speakSentence(){
+  if(!('speechSynthesis' in window)){
+    showToast('Tu navegador no soporta lectura en voz.', '🔊');
+    return;
+  }
+  const enEl = document.getElementById('sentEn');
+  let txt = enEl ? enEl.innerText : '';
+  txt = (txt || '').replace(/\s+/g,' ').trim();
+  if(!txt){
+    showToast('No hay oración para leer.', '🔊');
+    return;
+  }
+
+  try{ speechSynthesis.cancel(); }catch(e){}
+
+  const u = new SpeechSynthesisUtterance(txt);
+  if(__ttsVoice){
+    u.voice = __ttsVoice;
+    u.lang  = __ttsVoice.lang || 'en-US';
+  }else{
+    u.lang = 'en-US';
+  }
+
+  // Más lento (no muy rápido)
+  u.rate   = 0.85;
+  u.pitch  = 1.0;
+  u.volume = 1.0;
+
+  const btn = document.getElementById('ttsBtn');
+  if(btn){
+    btn.classList.add('copied');
+    btn.innerHTML = '🔊 Sonando…';
+  }
+  const reset = ()=>{
+    if(btn){
+      btn.classList.remove('copied');
+      btn.innerHTML = '🔊 Escuchar';
+    }
+  };
+  u.onend = reset;
+  u.onerror = reset;
+
+  speechSynthesis.speak(u);
 }
 
 /* =========================================================
