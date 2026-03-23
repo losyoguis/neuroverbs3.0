@@ -37,6 +37,37 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
+
+function isDemoMode() {
+  try { return localStorage.getItem("nv_demo_mode") === "1"; } catch (_) { return false; }
+}
+
+function getDemoProfile() {
+  try {
+    const raw = localStorage.getItem("user_profile");
+    const p = raw ? JSON.parse(raw) : null;
+    if (p && (p.demo || isDemoMode())) return p;
+  } catch (_) {}
+  return {
+    sub: "demo_mova_local",
+    name: "Invitado MOVA",
+    email: "demo@mova.local",
+    picture: "",
+    demo: true,
+    role: "demo"
+  };
+}
+
+function applyDemoModeUI() {
+  const btn = document.getElementById("googleBtn");
+  const sec = document.getElementById("leaderboardSection");
+  const badge = document.getElementById("movaDemoBadge");
+  const domainLabel = document.querySelector(".authDomainLabel");
+  if (btn) btn.style.display = "none";
+  if (sec) sec.style.display = "none";
+  if (badge) badge.style.display = "flex";
+  if (domainLabel) domainLabel.textContent = "Modo demo MOVA · ingreso sin registro";
+}
 function showUserChip(profile) {
   const chip = document.getElementById("userChip");
   const pic = document.getElementById("userPic");
@@ -61,6 +92,10 @@ function hideUserChip() {
 function clearSession() {
   localStorage.removeItem("google_id_token");
   localStorage.removeItem("user_profile");
+  localStorage.removeItem("nv_demo_mode");
+  localStorage.removeItem("usuario_nombre");
+  localStorage.removeItem("usuario_tipo");
+  localStorage.removeItem("usuario_id");
   hideUserChip();
   const sec = document.getElementById("leaderboardSection");
   if (sec) sec.style.display = "none";
@@ -140,6 +175,7 @@ function postToSheets(payload) {
 }
 
 function registrarEnSheets(idToken) {
+  if (isDemoMode()) return;
   // upsert sin sumar XP
   postToSheets({ action: "upsert", idToken, xpDelta: 0 });
 
@@ -169,6 +205,7 @@ function debugSheetsEndpoint() {
 }
 
 function queueXpDelta(idToken, xpDelta) {
+  if (isDemoMode()) return;
   if (!idToken) return;
   const delta = Number(xpDelta || 0);
   if (!Number.isFinite(delta) || delta <= 0) return;
@@ -182,6 +219,7 @@ function queueXpDelta(idToken, xpDelta) {
 
 // Trae el XP del usuario desde Sheets y lo aplica (Sheets manda)
 async function fetchAndApplyUserFromSheets() {
+  if (isDemoMode()) return;
   const profRaw = localStorage.getItem("user_profile");
   if (!profRaw) return;
   let prof;
@@ -364,6 +402,7 @@ function onGoogleCredential(response) {
     clearSession();
     return;
   }
+localStorage.removeItem("nv_demo_mode");
 localStorage.setItem("google_id_token", idToken);
   localStorage.setItem("user_profile", JSON.stringify({
     sub: user.sub,
@@ -393,6 +432,15 @@ localStorage.setItem("google_id_token", idToken);
 function initGoogleAuthAndSync() {
   const btn = document.getElementById("googleBtn");
   if (!btn) return;
+
+  if (isDemoMode()) {
+    try {
+      const prof = getDemoProfile();
+      showUserChip(prof);
+      applyDemoModeUI();
+    } catch(_) {}
+    return;
+  }
 
   // Si ya hay sesión guardada, pinta UI + carga data
   const token = localStorage.getItem("google_id_token");

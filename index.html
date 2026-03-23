@@ -65,6 +65,12 @@
 </div>
 <div class="authBar" id="authBar" style="display:flex;flex-direction:column;align-items:center;gap:12px;">
 <div data-help="🔑 Inicia sesión con Google para guardar tus XP y aparecer en el ranking. Solo estudiantes de la I.E Manuel J. Betancur." id="googleBtn"></div>
+
+<button class="movaBtn" id="movaDemoBtn" type="button" onclick="enterMovaDemo()">
+  🚀 Invitado MOVA
+</button>
+<div class="movaHint">Acceso rápido en modo demo, sin correo institucional y sin afectar el ranking real.</div>
+
 <div class="userChip" id="userChip" style="display:none;">
 <img alt="Foto" id="userPic"/>
 <div class="userMeta">
@@ -191,6 +197,46 @@ const TARGET = 'neuroverbs.html';
     const el = document.querySelector(".authDomainLabel");
     if (el) el.textContent = "Acceder con @" + d;
   }catch(_){}
+})();
+</script>
+
+
+<script>
+(function () {
+  const TARGET = "neuroverbs.html";
+  function buildDemoProfile() {
+    return {
+      sub: "demo_mova_" + Date.now(),
+      name: "Invitado MOVA",
+      email: "demo@mova.local",
+      picture: "",
+      demo: true,
+      role: "demo"
+    };
+  }
+
+  window.enterMovaDemo = function enterMovaDemo() {
+    try {
+      const profile = buildDemoProfile();
+      localStorage.setItem("nv_demo_mode", "1");
+      localStorage.removeItem("google_id_token");
+      localStorage.removeItem("rank_user");
+      localStorage.removeItem("mjb_user");
+      localStorage.setItem("user_profile", JSON.stringify(profile));
+      localStorage.setItem("usuario_nombre", profile.name);
+      localStorage.setItem("usuario_tipo", "invitado");
+      localStorage.setItem("usuario_id", profile.sub);
+    } catch (e) {
+      console.error("No pude activar modo demo MOVA:", e);
+    }
+    window.location.href = TARGET;
+  };
+
+  try {
+    if (localStorage.getItem("nv_demo_mode") === "1" && localStorage.getItem("user_profile")) {
+      window.location.replace(TARGET);
+    }
+  } catch (_) {}
 })();
 </script>
 
