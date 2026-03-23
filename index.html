@@ -239,7 +239,11 @@ const TARGET = 'neuroverbs.html';
   function updateMovaButtonLabel() {
     const btn = document.getElementById("movaDemoBtn");
     const meta = getMovaRoleMeta();
+    const wrap = document.querySelector(".movaEntryWrap");
     if (btn) btn.textContent = meta.icon + " " + meta.label;
+    if (wrap) {
+      wrap.setAttribute("data-mova-role", meta.key);
+    }
   }
 
   function buildDemoProfile() {
