@@ -48,9 +48,10 @@ function getDemoProfile() {
     const p = raw ? JSON.parse(raw) : null;
     if (p && (p.demo || isDemoMode())) return p;
   } catch (_) {}
+  const rememberedName = localStorage.getItem("usuario_nombre") || localStorage.getItem("mova_guest_name") || "Invitado MOVA";
   return {
     sub: "demo_mova_local",
-    name: "Invitado MOVA",
+    name: rememberedName,
     email: "demo@mova.local",
     picture: "",
     demo: true,
@@ -65,7 +66,11 @@ function applyDemoModeUI() {
   const domainLabel = document.querySelector(".authDomainLabel");
   if (btn) btn.style.display = "none";
   if (sec) sec.style.display = "none";
-  if (badge) badge.style.display = "flex";
+  if (badge) {
+    const p = getDemoProfile();
+    badge.textContent = "🚀 Modo demo activo · " + (p.name || "Invitado MOVA") + " · sin ranking real";
+    badge.style.display = "flex";
+  }
   if (domainLabel) domainLabel.textContent = "Modo demo MOVA · ingreso sin registro";
 }
 function showUserChip(profile) {

@@ -66,9 +66,15 @@
 <div class="authBar" id="authBar" style="display:flex;flex-direction:column;align-items:center;gap:12px;">
 <div data-help="🔑 Inicia sesión con Google para guardar tus XP y aparecer en el ranking. Solo estudiantes de la I.E Manuel J. Betancur." id="googleBtn"></div>
 
-<button class="movaBtn" id="movaDemoBtn" type="button" onclick="enterMovaDemo()">
-  🚀 Invitado MOVA
-</button>
+<div class="movaEntryWrap">
+  <label class="movaLabel" for="movaGuestName">Nombre para entrar en modo demo</label>
+  <div class="movaEntryRow">
+    <input class="movaInput" id="movaGuestName" type="text" maxlength="40" placeholder="Escribe tu nombre" autocomplete="name" />
+    <button class="movaBtn" id="movaDemoBtn" type="button" onclick="enterMovaDemo()">
+      🚀 Invitado MOVA
+    </button>
+  </div>
+</div>
 <div class="movaHint">Acceso rápido en modo demo, sin correo institucional y sin afectar el ranking real.</div>
 
 <div class="userChip" id="userChip" style="display:none;">
@@ -204,10 +210,21 @@ const TARGET = 'neuroverbs.html';
 <script>
 (function () {
   const TARGET = "neuroverbs.html";
+  function sanitizeDemoName(value) {
+    const clean = String(value || "")
+      .replace(/\s+/g, " ")
+      .replace(/[^\p{L}\p{N} .,_-]/gu, "")
+      .trim();
+    return clean.slice(0, 40);
+  }
+
   function buildDemoProfile() {
+    const input = document.getElementById("movaGuestName");
+    const typedName = input ? sanitizeDemoName(input.value) : "";
+    const guestName = typedName || "Invitado MOVA";
     return {
       sub: "demo_mova_" + Date.now(),
-      name: "Invitado MOVA",
+      name: guestName,
       email: "demo@mova.local",
       picture: "",
       demo: true,
