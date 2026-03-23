@@ -79,7 +79,7 @@ function applyDemoModeUI() {
   const sec = document.getElementById("leaderboardSection");
   const badge = document.getElementById("movaDemoBadge");
   const domainLabel = document.querySelector(".authDomainLabel");
-  if (btn) btn.style.display = "none";
+  if (btn) btn.style.display = "";
   if (sec) sec.style.display = "none";
   if (badge) {
     const p = getDemoProfile();
@@ -87,7 +87,7 @@ function applyDemoModeUI() {
     badge.textContent = "🚀 Modo demo activo · " + rolePart + " · " + (p.name || "Invitado MOVA") + " · sin ranking real";
     badge.style.display = "flex";
   }
-  if (domainLabel) domainLabel.textContent = "Modo demo MOVA · ingreso sin registro";
+  if (domainLabel) domainLabel.textContent = "Puedes entrar con Gmail institucional o usar MOVA en modo demo";
 }
 function showUserChip(profile) {
   const chip = document.getElementById("userChip");
