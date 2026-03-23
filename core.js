@@ -49,13 +49,28 @@ function getDemoProfile() {
     if (p && (p.demo || isDemoMode())) return p;
   } catch (_) {}
   const rememberedName = localStorage.getItem("usuario_nombre") || localStorage.getItem("mova_guest_name") || "Invitado MOVA";
+  const rememberedRole = localStorage.getItem("usuario_tipo") || "invitado";
+  const rememberedRoleLabel = localStorage.getItem("usuario_rol_label") || (
+    rememberedRole === "estudiante" ? "Estudiante MOVA" :
+    rememberedRole === "docente" ? "Docente MOVA" : "Invitado MOVA"
+  );
+  const rememberedEmail = (
+    rememberedRole === "estudiante" ? "estudiante@mova.local" :
+    rememberedRole === "docente" ? "docente@mova.local" : "demo@mova.local"
+  );
+  const rememberedIcon = (
+    rememberedRole === "estudiante" ? "🎓" :
+    rememberedRole === "docente" ? "🧑‍🏫" : "🚀"
+  );
   return {
     sub: "demo_mova_local",
     name: rememberedName,
-    email: "demo@mova.local",
+    email: rememberedEmail,
     picture: "",
     demo: true,
-    role: "demo"
+    role: rememberedRole,
+    roleLabel: rememberedRoleLabel,
+    roleIcon: rememberedIcon
   };
 }
 
@@ -68,7 +83,8 @@ function applyDemoModeUI() {
   if (sec) sec.style.display = "none";
   if (badge) {
     const p = getDemoProfile();
-    badge.textContent = "🚀 Modo demo activo · " + (p.name || "Invitado MOVA") + " · sin ranking real";
+    const rolePart = p.roleLabel ? (p.roleIcon ? (p.roleIcon + " " + p.roleLabel) : p.roleLabel) : "🚀 Invitado MOVA";
+    badge.textContent = "🚀 Modo demo activo · " + rolePart + " · " + (p.name || "Invitado MOVA") + " · sin ranking real";
     badge.style.display = "flex";
   }
   if (domainLabel) domainLabel.textContent = "Modo demo MOVA · ingreso sin registro";
