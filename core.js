@@ -460,7 +460,6 @@ function initGoogleAuthAndSync() {
       showUserChip(prof);
       applyDemoModeUI();
     } catch(_) {}
-    return;
   }
 
   // Si ya hay sesión guardada, pinta UI + carga data
@@ -480,6 +479,8 @@ function initGoogleAuthAndSync() {
 
   // Render button una vez
   try {
+    btn.style.display = "flex";
+    btn.innerHTML = "";
     if (!btn.__rendered) {
       google.accounts.id.initialize({
         client_id: OAUTH_CLIENT_ID,

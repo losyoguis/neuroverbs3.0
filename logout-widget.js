@@ -66,7 +66,13 @@
       "mjb_user",
       "google_user",
       "neuroverbs_user",
-      "auth_user"
+      "auth_user",
+      "nv_demo_mode",
+      "usuario_nombre",
+      "usuario_tipo",
+      "usuario_rol_label",
+      "usuario_id",
+      "mova_guest_name"
     ];
     for(const k of keys){
       try{ localStorage.removeItem(k); }catch(_){}
